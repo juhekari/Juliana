@@ -794,7 +794,8 @@ function viewCursos(sec){
 }
 
 /* Frequência de um requisito entre as vagas ainda em jogo (não arquivadas).
-   Obrigatório pesa 1, desejável 0,5 — mesma conta do console do Victor. */
+   Obrigatório pesa 1, desejável 0,5: um requisito listado como diferencial
+   não pode derrubar a cobertura como se fosse obrigatório. */
 function frequencia(skillId){
   let f=0;
   VAGAS.filter(v=>estagio(v.id)!=="arquivada").forEach(v=>{

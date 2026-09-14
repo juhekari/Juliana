@@ -1,0 +1,172 @@
+{
+  "slug": "exemplo",
+  "regua": 80,
+  "tabs": ["geral","analise","progresso","mercado","cv","cursos","skills","projetos","aplicadas","arquivadas","metodo"],
+
+  "pessoa": {
+    "nome": "Ana Ribeiro",
+    "cargo": "Analista de Dados Sênior",
+    "tituloConsole": "Career Console da Ana",
+    "alvos": ["Data Analyst", "Analytics Engineer", "Data Product Manager"],
+    "locaisAceitos": ["São Paulo", "Remoto"]
+  },
+
+  "visaoGeral": {
+    "ondeEsta": "Analista de dados sênior há 4 anos num marketplace de logística, dona do modelo de atribuição de entrega e da régua de SLA. Domínio forte de SQL e dbt; Python de produção é o degrau que falta.",
+    "oQueFalta": "As vagas de Analytics Engineer pedem orquestração (Airflow) e testes de dados. Você faz os dois na prática, mas o CV descreve isso como \"manutenção de pipeline\" — vocabulário errado para o filtro de recrutador.",
+    "proximoPasso": "Fechar a leitura da vaga da Nubank e mover para progresso: é a de maior cobertura e a única que aceita o seu perfil sem exigir engenharia de software formal.",
+    "paragrafos": [
+      "O que aparece em quase toda descrição lida é modelagem dimensional. Você modela star schema desde 2023, mas em nenhum lugar do CV está escrito assim."
+    ],
+    "alertas": [
+      "Duas das vagas abaixo são presenciais em São Paulo. Se a mudança não estiver na mesa, arquive agora em vez de gastar processo."
+    ]
+  },
+
+  "vagas": [
+    {
+      "id": "v-001",
+      "titulo": "Analytics Engineer",
+      "empresa": "Nubank",
+      "local": "São Paulo",
+      "modalidade": "Remoto",
+      "url": "https://example.com/vaga/analytics-engineer",
+      "segmento": "Fintech · plataforma de dados",
+      "cob": 88,
+      "tem": ["SQL avançado","dbt em produção","Modelagem dimensional","Testes de dados","Comunicação com áreas de negócio"],
+      "falta": ["Airflow como dono do orquestrador"],
+      "posic": "Posicione-se pela camada semântica, não pela ferramenta: o anúncio pede alguém que decida o que é métrica oficial, e isso é o que você faz hoje. O Airflow é o único item faltando e o próprio anúncio o lista como desejável.",
+      "ajustesCv": [
+        "Trocar \"manutenção de pipeline\" por \"orquestração e testes de dados\"",
+        "Abrir o CV com modelagem dimensional, que é o termo literal da vaga"
+      ],
+      "nota": "A de maior cobertura do lote e a única totalmente remota."
+    },
+    {
+      "id": "v-002",
+      "titulo": "Data Product Manager",
+      "empresa": "Loggi",
+      "local": "São Paulo",
+      "modalidade": "Presencial",
+      "url": "https://example.com/vaga/data-pm",
+      "segmento": "Logística · produto de dados",
+      "cob": 72,
+      "tem": ["Domínio de logística","Definição de métrica","Trabalho com engenharia"],
+      "falta": ["Discovery formal","Roadmap como dono","Experimentação A/B"],
+      "posic": "O domínio de logística é o trunfo e é raro. Mas a vaga é de produto, e o seu histórico é de análise: ataque isso de frente na carta em vez de esperar que não notem.",
+      "nota": "Presencial em São Paulo. Confirme se a mudança está na mesa antes de investir.",
+      "alerta": true
+    },
+    {
+      "id": "v-003",
+      "titulo": "Senior Data Analyst",
+      "empresa": "iFood",
+      "local": "Campinas",
+      "modalidade": "Híbrido",
+      "url": "https://example.com/vaga/senior-analyst",
+      "cob": 64,
+      "tem": ["SQL avançado","Dashboards","Análise de coorte"],
+      "falta": ["Experimentação A/B em escala","Estatística inferencial","Presença em Campinas"],
+      "nota": "Abaixo da régua e híbrida em Campinas. Só vale se a estatística for fechada antes."
+    }
+  ],
+
+  "leads": [
+    {"id":"l-001","titulo":"Analytics Engineer Pleno","empresa":"QuintoAndar","local":"Brasil","modalidade":"Remoto","url":"https://example.com/lead/1","sinal":91},
+    {"id":"l-002","titulo":"Data Platform Analyst","empresa":"Stone","local":"Rio de Janeiro","modalidade":"Híbrido","url":"https://example.com/lead/2","sinal":84},
+    {"id":"l-003","titulo":"BI Engineer","empresa":"Creditas","local":"Brasil","modalidade":"Remoto","url":"https://example.com/lead/3","sinal":77}
+  ],
+
+  "posicionamento": {
+    "titulo": "Analytics Engineer em empresa de operação pesada — não Data Scientist, não engenheiro de software.",
+    "alvo": "O alvo é a camada entre o dado bruto e a decisão: modelagem, métrica oficial e confiança no número. É onde o seu histórico já está, e é o que as três vagas de maior cobertura descrevem.",
+    "diferenciais": [
+      "Domínio de logística de última milha: SLA, janela de entrega, atribuição. Isso não se aprende em bootcamp e é filtro de entrada em Loggi, iFood e QuintoAndar.",
+      "dbt em produção com testes, não em projeto de estudo. A maioria dos candidatos tem o contrário.",
+      "Fala com área de negócio sem intermediário — citado literalmente em duas das três descrições lidas."
+    ],
+    "contra": [
+      "Contra engenheiros de software, em qualquer vaga que peça Python de produção ou code review.",
+      "Contra cientistas de dados, em vaga que peça modelagem preditiva ou inferência causal.",
+      "Em experimentação A/B, que aparece em duas descrições e não está no seu CV."
+    ],
+    "setores": [
+      {"setor":"Logística e marketplace","afinidade":"Direta","porque":"É o que você faz. O vocabulário transfere inteiro."},
+      {"setor":"Fintech","afinidade":"Alta","porque":"Mesma exigência de confiabilidade de número e trilha de auditoria."},
+      {"setor":"Varejo e e-commerce","afinidade":"Média","porque":"A operação é parecida, o domínio de entrega ajuda menos."},
+      {"setor":"Saúde e educação","afinidade":"Baixa","porque":"Nada do domínio transfere; só o método."}
+    ]
+  },
+
+  "cvGeral": [
+    {"t":"Trocar o título do topo para \"Analytics Engineer\"","porque":"\"Analista de dados\" empurra o CV para a pilha de BI, onde a régua salarial é outra."},
+    {"t":"Abrir com modelagem dimensional e camada semântica","porque":"São os termos literais das três vagas de maior cobertura."},
+    {"t":"Reescrever cada bullet como decisão, não como tarefa","porque":"\"Mantive o pipeline\" vira \"Defini a métrica oficial de SLA usada por 4 times\"."},
+    {"t":"Colocar número em pelo menos 5 bullets","porque":"Nenhum bullet do CV atual tem métrica."},
+    {"t":"Criar seção de Skills com SQL, dbt, Airflow, Python","porque":"Filtros automáticos procuram exatamente esses termos."},
+    {"t":"Manter uma versão em inglês atualizada","porque":"Duas das vagas têm processo em inglês."}
+  ],
+
+  "cursos": [
+    {"nome":"dbt Fundamentals","onde":"dbt Labs","link":"https://example.com/dbt","quando":"Agora","custo":"Gratuito","porque":"Você já usa dbt, mas o certificado tira a dúvida na triagem. Curto."},
+    {"nome":"Airflow para analistas","onde":"Astronomer","link":"https://example.com/airflow","quando":"Agora","custo":"Gratuito","porque":"Único item faltando na vaga da Nubank, a de maior cobertura do painel."},
+    {"nome":"Experimentação A/B","onde":"Udacity","link":"https://example.com/ab","quando":"Depois","custo":"Pago","porque":"Aparece em duas descrições. Não bloqueia a candidatura da Nubank, só as de produto."}
+  ],
+
+  "categorias": [
+    {"id":"dados","nome":"Dados e modelagem"},
+    {"id":"eng","nome":"Engenharia e orquestração"},
+    {"id":"neg","nome":"Negócio e comunicação"}
+  ],
+
+  "skills": [
+    {"id":"sql","nome":"SQL avançado","categoria":"dados"},
+    {"id":"dbt","nome":"dbt","categoria":"dados"},
+    {"id":"dim","nome":"Modelagem dimensional","categoria":"dados"},
+    {"id":"airflow","nome":"Airflow","categoria":"eng"},
+    {"id":"python","nome":"Python de produção","categoria":"eng"},
+    {"id":"testes","nome":"Testes de dados","categoria":"eng"},
+    {"id":"ab","nome":"Experimentação A/B","categoria":"dados"},
+    {"id":"stake","nome":"Comunicação com negócio","categoria":"neg"},
+    {"id":"disc","nome":"Discovery de produto","categoria":"neg"}
+  ],
+
+  "projetos": [
+    {
+      "id":"p-001",
+      "nome":"Pipeline público de SLA de entrega",
+      "contexto":"Portfólio",
+      "descricao":"Repositório com dbt + Airflow sobre dados abertos de logística, com testes e documentação. Vira evidência direta do item que falta na vaga da Nubank.",
+      "skills":["dbt","airflow","testes","dim"],
+      "etapas":[
+        {"nome":"Escolher a base pública e definir o grão"},
+        {"nome":"Modelar o star schema"},
+        {"nome":"Escrever os testes de dados"},
+        {"nome":"Orquestrar no Airflow"},
+        {"nome":"Publicar com README explicando as decisões"}
+      ]
+    }
+  ],
+
+  "metodo": {
+    "Varredura": "Exemplo fictício. Numa varredura real, este campo diz quantas vagas foram lidas, em que data e por qual filtro.",
+    "Cobertura": "Atribuída por leitura dos requisitos de cada anúncio, não por contagem de palavra-chave.",
+    "Limite": "Cobertura é julgamento sobre texto de anúncio, não promessa de resultado. Vaga sai do ar, requisito muda e recrutador pesa o que quer."
+  },
+
+  "fonte": "Dados de exemplo, pessoa fictícia. Substitua por data/console.json.",
+
+  "ui": {
+    "tab.geral": "Visão geral",
+    "tab.analise": "Vagas para análise",
+    "tab.progresso": "Vagas em progresso",
+    "tab.mercado": "Posicionamento de mercado",
+    "tab.cv": "Ajustes de CV",
+    "tab.cursos": "Estudos e certificações",
+    "tab.skills": "Requisitos e nível",
+    "tab.projetos": "Projetos",
+    "tab.aplicadas": "Vagas aplicadas",
+    "tab.arquivadas": "Vagas arquivadas",
+    "tab.metodo": "Método"
+  }
+}

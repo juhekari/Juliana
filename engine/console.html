@@ -1,0 +1,1031 @@
+<title>Career Console</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700&family=JetBrains+Mono:wght@400;600&family=Source+Sans+3:ital,wght@0,400;0,600;1,400&display=swap">
+<style>
+:root{
+  --ground:#f6f8f7; --surface:#ffffff; --surface-2:#eef2f0;
+  --ink:#15201d; --ink-2:#4d5c58; --ink-3:#7d8b87;
+  --line:#dde4e1; --line-2:#c8d3cf;
+  --accent:#0d6b5b; --accent-soft:#e0efeb;
+  --warn:#a4661a; --warn-soft:#f6ecdd;
+  --crit:#9e3a2f; --crit-soft:#f7e6e3;
+  --ok:#2f6d3f; --ok-soft:#e4efe5;
+  --grid:#e1e0d9;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --ground:#0e1413; --surface:#161e1c; --surface-2:#1e2826;
+  --ink:#e7edeb; --ink-2:#9fb0ab; --ink-3:#74847f;
+  --line:#27322f; --line-2:#35433f;
+  --accent:#45b8a0; --accent-soft:#16302b;
+  --warn:#d69a4e; --warn-soft:#322617;
+  --crit:#d97b6c; --crit-soft:#331e1a;
+  --ok:#6fbb7e; --ok-soft:#172a1b;
+  --grid:#2c2c2a;
+}}
+:root[data-theme="dark"]{
+  --ground:#0e1413; --surface:#161e1c; --surface-2:#1e2826;
+  --ink:#e7edeb; --ink-2:#9fb0ab; --ink-3:#74847f;
+  --line:#27322f; --line-2:#35433f;
+  --accent:#45b8a0; --accent-soft:#16302b;
+  --warn:#d69a4e; --warn-soft:#322617;
+  --crit:#d97b6c; --crit-soft:#331e1a;
+  --ok:#6fbb7e; --ok-soft:#172a1b;
+  --grid:#2c2c2a;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--ground);color:var(--ink);
+  font-family:"Source Sans 3",system-ui,-apple-system,Segoe UI,sans-serif;
+  font-size:15.5px;line-height:1.55;-webkit-text-size-adjust:100%}
+.wrap{max-width:1080px;margin:0 auto;padding-inline:18px;padding-block:0 72px}
+h1,h2,h3,h4{font-family:Archivo,system-ui,sans-serif;margin:0;text-wrap:balance;letter-spacing:-.011em}
+.mono{font-family:"JetBrains Mono",ui-monospace,monospace;font-variant-numeric:tabular-nums}
+a{color:var(--accent)}
+
+header{border-bottom:1px solid var(--line);background:var(--surface)}
+.hd{max-width:1080px;margin:0 auto;padding:22px 18px 16px}
+.eyebrow{font-family:Archivo;font-size:11px;font-weight:600;letter-spacing:.13em;
+  text-transform:uppercase;color:var(--accent);margin-bottom:7px}
+h1{font-size:clamp(23px,5.2vw,31px);font-weight:700;line-height:1.14}
+.sync{display:inline-flex;align-items:center;gap:7px;margin-top:13px;font-size:12.5px;color:var(--ink-2);
+  border:1px solid var(--line);border-radius:99px;padding:3px 11px 3px 9px;background:var(--ground)}
+.dot{width:7px;height:7px;border-radius:50%;background:var(--ink-3);flex:none}
+.dot.on{background:var(--ok)}.dot.off{background:var(--warn)}
+
+nav{position:sticky;top:0;z-index:20;background:var(--surface);border-bottom:1px solid var(--line)}
+.tabs{max-width:1080px;margin:0 auto;display:flex;gap:1px;overflow-x:auto;padding:0 12px;scrollbar-width:thin}
+.tab{flex:none;appearance:none;background:none;border:0;border-bottom:2px solid transparent;
+  font-family:Archivo;font-size:13.5px;font-weight:600;color:var(--ink-2);
+  padding:12px 11px 10px;cursor:pointer;white-space:nowrap}
+.tab:hover{color:var(--ink)}
+.tab[aria-selected="true"]{color:var(--accent);border-bottom-color:var(--accent)}
+.tab:focus-visible{outline:2px solid var(--accent);outline-offset:-3px}
+.cnt{font-family:"JetBrains Mono";font-size:10.5px;color:var(--ink-3);margin-left:5px}
+
+section[hidden]{display:none!important}
+.sec{padding-top:26px}
+.lede{color:var(--ink-2);max-width:66ch;margin:0 0 22px}
+h2{font-size:19px;font-weight:600;margin-bottom:3px}
+h3{font-size:15.5px;font-weight:600;margin:30px 0 10px;padding-bottom:6px;border-bottom:1px solid var(--line)}
+h3:first-of-type{margin-top:0}
+
+.tiles{display:grid;grid-template-columns:repeat(auto-fit,minmax(148px,1fr));gap:1px;
+  background:var(--line);border:1px solid var(--line);margin-bottom:24px}
+.tile{background:var(--surface);padding:14px 15px}
+.tile .k{font-family:Archivo;font-size:10.5px;font-weight:600;letter-spacing:.1em;
+  text-transform:uppercase;color:var(--ink-3)}
+.tile .v{font-family:"JetBrains Mono";font-size:26px;font-weight:600;line-height:1.15;margin-top:5px}
+.tile .n{font-size:12.5px;color:var(--ink-2);margin-top:2px}
+
+.bar{position:relative;height:9px;background:var(--surface-2);border:1px solid var(--line);margin:9px 0 5px}
+.bar i{position:absolute;inset:0 auto 0 0;display:block;background:var(--accent)}
+.bar i.low{background:var(--warn)}
+.bar b{position:absolute;top:-4px;bottom:-4px;width:2px;background:var(--ink);opacity:.7}
+.barlab{display:flex;justify-content:space-between;font-size:11.5px;color:var(--ink-2);font-family:"JetBrains Mono"}
+.pct{font-family:"JetBrains Mono";font-weight:600;font-variant-numeric:tabular-nums}
+
+.vaga{border:1px solid var(--line);background:var(--surface);padding:16px 17px;margin-bottom:14px}
+.vaga.pronta{border-left:3px solid var(--ok)}
+.vaga.quase{border-left:3px solid var(--warn)}
+.vtop{display:flex;flex-wrap:wrap;gap:8px 14px;align-items:baseline;justify-content:space-between}
+.vtit{font-family:Archivo;font-size:16px;font-weight:600;line-height:1.28;flex:1 1 240px;min-width:0}
+.vmeta{font-size:13px;color:var(--ink-2);margin-top:3px}
+.vmeta .emp{color:var(--ink);font-weight:600}
+.vlink{display:inline-block;margin-top:8px;font-size:13px;font-weight:600}
+.chips{display:flex;flex-wrap:wrap;gap:5px;margin:11px 0 0}
+.chip{font-size:12px;padding:2px 8px;border:1px solid var(--line-2);border-radius:99px;
+  color:var(--ink-2);background:var(--ground)}
+.chip.tem{background:var(--ok-soft);border-color:transparent;color:var(--ok)}
+.chip.falta{background:var(--crit-soft);border-color:transparent;color:var(--crit)}
+.reqlab{font-family:Archivo;font-size:10.5px;font-weight:600;letter-spacing:.1em;
+  text-transform:uppercase;color:var(--ink-3);margin-top:13px}
+.nota{font-size:13.5px;color:var(--ink-2);margin-top:12px;padding-left:11px;border-left:2px solid var(--line-2)}
+.nota.alerta{border-left-color:var(--warn);color:var(--ink)}
+.status{display:flex;flex-wrap:wrap;gap:5px;margin-top:14px;padding-top:13px;border-top:1px solid var(--line)}
+.st{appearance:none;font:inherit;font-size:12.5px;background:var(--surface);border:1px solid var(--line-2);
+  color:var(--ink-2);padding:4px 11px;border-radius:99px;cursor:pointer}
+.st:hover{border-color:var(--accent);color:var(--accent)}
+.st.forte{background:var(--accent);border-color:var(--accent);color:#fff;font-weight:600}
+:root[data-theme="dark"] .st.forte,
+:root:not([data-theme="light"]) .st.forte{color:#0e1413}
+.st.perigo:hover{border-color:var(--crit);color:var(--crit)}
+.st:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+
+.seg{display:inline-block;font-family:Archivo;font-size:10.5px;font-weight:600;letter-spacing:.08em;
+  text-transform:uppercase;color:var(--accent);background:var(--accent-soft);
+  padding:2px 8px;border-radius:99px;margin-bottom:8px}
+.bloco{margin-top:15px;padding-top:13px;border-top:1px solid var(--line)}
+.bloco>.bt{font-family:Archivo;font-size:10.5px;font-weight:600;letter-spacing:.1em;
+  text-transform:uppercase;color:var(--ink-3);margin-bottom:7px}
+
+.busca{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:18px}
+.busca input{flex:1 1 240px;min-width:0;font:inherit;font-size:14.5px;padding:8px 12px;
+  border:1px solid var(--line-2);border-radius:3px;background:var(--surface);color:var(--ink)}
+.busca input:focus-visible{outline:2px solid var(--accent);outline-offset:-1px}
+.busca .res{font-size:13px;color:var(--ink-3);font-family:"JetBrains Mono"}
+
+.form{border:1px solid var(--line-2);background:var(--surface-2);padding:15px 16px;margin-bottom:22px}
+.form h4{font-family:Archivo;font-size:14.5px;font-weight:600;margin-bottom:3px}
+.form p{font-size:13.5px;color:var(--ink-2);margin:0 0 11px}
+.linha{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:8px}
+.linha input,.form textarea{flex:1 1 180px;min-width:0;width:100%;font:inherit;font-size:14.5px;padding:8px 11px;
+  border:1px solid var(--line-2);border-radius:3px;background:var(--surface);color:var(--ink)}
+.form textarea{min-height:110px;resize:vertical;font-size:13.5px}
+.linha input:focus-visible,.form textarea:focus-visible{outline:2px solid var(--accent);outline-offset:-1px}
+.form .erro{font-size:13px;color:var(--crit);margin-top:6px;min-height:1px}
+.btn{appearance:none;font:inherit;font-size:14px;font-weight:600;font-family:Archivo;
+  background:var(--accent);border:1px solid var(--accent);color:#fff;
+  padding:8px 16px;border-radius:3px;cursor:pointer}
+:root[data-theme="dark"] .btn,:root:not([data-theme="light"]) .btn{color:#0e1413}
+.btn[disabled]{opacity:.55;cursor:default}
+.btn:focus-visible{outline:2px solid var(--ink);outline-offset:2px}
+
+.aviso{border:1px solid var(--line);border-left:3px solid var(--warn);background:var(--warn-soft);
+  padding:13px 15px;margin-bottom:20px;font-size:14px}
+.aviso strong{font-family:Archivo}
+.fonte{font-size:12.5px;color:var(--ink-3);margin-top:18px;padding-top:12px;border-top:1px solid var(--line)}
+.lead{display:grid;grid-template-columns:1fr auto;gap:8px 12px;align-items:center;
+  padding:10px 0;border-bottom:1px solid var(--line)}
+.lead .lt{font-size:14px;line-height:1.35;min-width:0}
+.lead .lt em{font-style:normal;color:var(--ink-2);display:block;font-size:12.5px;margin-top:2px}
+@media (max-width:560px){.lead{grid-template-columns:1fr}}
+
+.item{display:flex;gap:10px;align-items:flex-start;padding:7px 0;font-size:14px;
+  cursor:pointer;border-bottom:1px solid var(--line)}
+.item input{margin:4px 0 0;flex:none;width:15px;height:15px;accent-color:var(--accent)}
+.item.ok .it{text-decoration:line-through;color:var(--ink-3)}
+.item .porque{display:block;font-size:12.5px;color:var(--ink-3);margin-top:2px}
+.quando{display:inline-block;font-size:11px;font-weight:600;padding:2px 8px;border-radius:99px;
+  background:var(--ground);border:1px solid var(--line-2);color:var(--ink-2);white-space:nowrap;margin-left:6px}
+
+.niv{display:inline-flex;gap:3px}
+.nivbtn{width:26px;height:26px;border-radius:4px;border:1px solid var(--line-2);background:var(--surface);
+  color:var(--ink-3);font:600 11px/1 "JetBrains Mono",monospace;cursor:pointer}
+.nivbtn.on{background:var(--accent);border-color:var(--accent);color:#fff}
+:root[data-theme="dark"] .nivbtn.on,:root:not([data-theme="light"]) .nivbtn.on{color:#0e1413}
+.skrow{display:grid;grid-template-columns:1fr auto auto;gap:10px;align-items:center;
+  padding:8px 0;border-bottom:1px solid var(--line);font-size:14px}
+.skrow .cat{font-size:11.5px;color:var(--ink-3);display:block}
+@media (max-width:560px){.skrow{grid-template-columns:1fr auto}}
+
+.rolar{overflow-x:auto;-webkit-overflow-scrolling:touch}
+table{width:100%;border-collapse:collapse;font-size:13.5px;min-width:480px}
+th,td{text-align:left;padding:8px 10px;border-bottom:1px solid var(--line);vertical-align:top}
+th{font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--ink-3);font-family:Archivo}
+
+dl.metodo{margin:0}
+dl.metodo dt{font-family:Archivo;font-size:11px;font-weight:600;letter-spacing:.1em;
+  text-transform:uppercase;color:var(--ink-3);margin-top:16px}
+dl.metodo dd{margin:4px 0 0;color:var(--ink-2);font-size:14px;max-width:72ch}
+
+.vazio{color:var(--ink-3);font-size:13.5px;padding:24px 16px;text-align:center;
+  border:1px dashed var(--line-2);background:var(--surface)}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+</style>
+
+<header>
+  <div class="hd">
+    <div class="eyebrow" id="eyebrow"></div>
+    <h1 id="titulo">Career Console</h1>
+    <div class="sync"><span class="dot" id="dot"></span><span id="syncTxt">Conectando…</span></div>
+  </div>
+</header>
+
+<nav><div class="tabs" role="tablist" id="tabs"></div></nav>
+<div class="wrap" id="wrap"></div>
+
+<script>
+/* O build substitui este vão inteiro pelo conteúdo de console.json.
+   Deixado como null, o console sobe em modo de demonstração e diz o que falta. */
+window.__CONSOLE__ = /*__DADOS__*/ null /*__FIM__*/;
+</script>
+
+<script>
+"use strict";
+
+/* ===================================================================
+   DADOS E TEXTOS
+   Todo rótulo visível sai do arquivo de dados. UI_PADRAO é a rede de
+   segurança: chave ausente ou escrita errada cai no português em vez
+   de deixar um buraco na tela.
+   =================================================================== */
+const DADOS = window.__CONSOLE__ || {};
+const UI_PADRAO = {
+  "tab.geral":"Visão geral", "tab.analise":"Vagas para análise",
+  "tab.progresso":"Vagas em progresso", "tab.mercado":"Posicionamento de mercado",
+  "tab.cv":"Ajustes de CV", "tab.cursos":"Estudos e certificações",
+  "tab.skills":"Requisitos e nível", "tab.projetos":"Projetos",
+  "tab.aplicadas":"Vagas aplicadas", "tab.arquivadas":"Vagas arquivadas",
+  "tab.metodo":"Método",
+  "geral.titulo":"Onde você está", "geral.comoFunciona":"Como este console funciona",
+  "geral.oQueFalta":"O que falta", "geral.proximoPasso":"Próximo passo",
+  "geral.alertas":"Atenção",
+  "geral.comoFuncionaTexto":"A vaga entra em Vagas para análise. Quando você decide persegui-la, vai para Vagas em progresso, onde ficam o posicionamento e os ajustes de CV daquela vaga. Ao se inscrever, clique em Me inscrevi e ela cai em Vagas aplicadas.",
+  "analise.lede":"Tudo que a varredura trouxe e ainda não foi decidido.",
+  "analise.lidas":"Descrição lida — cobertura real",
+  "analise.cruas":"Descrição ainda não lida — só sinal de palavra-chave",
+  "analise.cruasLede":"O percentual aqui é casamento grosseiro de termo, não cobertura. Não decida por ele.",
+  "analise.minhas":"Adicionadas por você — ainda não lidas",
+  "analise.buscar":"Buscar por cargo, empresa ou cidade",
+  "progresso.lede":"As que você está perseguindo. Cada uma traz o posicionamento e os ajustes de CV daquela vaga.",
+  "progresso.posicionamento":"Posicionamento", "progresso.ajustes":"Ajustes de CV para esta vaga",
+  "progresso.puxar":"Puxe para o topo", "progresso.endereçar":"Endereçar na carta ou na entrevista",
+  "aplicadas.lede":"Onde você de fato se inscreveu — pelo console ou por fora dele.",
+  "arquivadas.lede":"Descartadas. Ficam guardadas para você não reavaliar a mesma vaga duas vezes.",
+  "mercado.diferenciais":"Onde você ganha", "mercado.contra":"Onde você perde",
+  "mercado.setores":"Afinidade por setor",
+  "cv.lede":"Ajustes que valem para todas as candidaturas. Marque o que já fez.",
+  "cursos.lede":"Cada item responde a um requisito que apareceu nas vagas lidas.",
+  "skills.lede":"Seu nível em cada requisito. Marque de 0 a 3.",
+  "skills.gaps":"Maiores lacunas", "skills.catalogo":"Catálogo",
+  "projetos.lede":"Projetos que viram evidência no CV. Marque as etapas concluídas.",
+  "metodo.lede":"Como esta análise foi feita, e o que ela não garante.",
+  "acao.perseguir":"Vou perseguir", "acao.arquivar":"Arquivar",
+  "acao.inscrevi":"Me inscrevi", "acao.devolver":"Devolver para análise",
+  "acao.voltarProgresso":"Voltar para progresso", "acao.voltarAnalise":"Voltar para análise",
+  "acao.remover":"Remover", "acao.abrir":"Abrir a vaga",
+  "add.titulo":"Adicionar vaga pelo link",
+  "add.texto":"Achou uma vaga por conta própria? Cole o link. Me mande o mesmo link na conversa e eu leio a descrição.",
+  "add.botao":"Adicionar", "add.placeholder":"https://… cole só o link",
+  "add.invalido":"Esse link não parece um endereço válido. Comece com https://",
+  "add.duplicada":"Essa vaga já estava aqui — só movi de aba.",
+  "add.ok":"Adicionada. Me mande o link na conversa que eu leio a descrição e preencho o resto.",
+  "colar.titulo":"Cadastrar vaga colando o anúncio",
+  "colar.texto":"Cole o link e o texto do anúncio. Eu leio, calculo a cobertura e preencho o resto.",
+  "colar.botao":"Ler anúncio e cadastrar", "colar.lendo":"Lendo o anúncio…",
+  "colar.curto":"Preciso do texto do anúncio, não só do link — a página não consegue abrir a URL sozinha.",
+  "sync.servidor":"Salvo no servidor", "sync.local":"Salvo só neste aparelho",
+  "sync.conectando":"Conectando…",
+  "semLeitura":"Eu não li a descrição desta vaga. Sem os requisitos não dá para calcular cobertura nem escrever posicionamento — e eu não vou inventar. Me mande este link na conversa.",
+  "vazio.analise":"Nada aqui. Você já decidiu sobre todas.",
+  "vazio.progresso":"Nada em progresso. Marque “Vou perseguir” em Vagas para análise.",
+  "vazio.aplicadas":"Nenhuma candidatura registrada ainda.",
+  "vazio.arquivadas":"Nada arquivado.",
+  "vazio.busca":"Nenhuma bate com a busca.",
+  "regua.pronta":"pronta · régua {r}%", "regua.faltam":"faltam {n} pontos para os {r}%",
+  "abaixoDaRegua":"Abaixo da régua. Se for aplicar mesmo assim, a carta precisa atacar de frente o que falta.",
+};
+const t = (k,vars) => {
+  let s = (DADOS.ui && DADOS.ui[k]) || UI_PADRAO[k] || k;
+  if(vars) Object.keys(vars).forEach(v => { s = s.split("{"+v+"}").join(vars[v]); });
+  return s;
+};
+const REGUA = typeof DADOS.regua === "number" ? DADOS.regua : 80;
+const NIVEIS = DADOS.niveis || ["Não iniciado","Aprendendo","Confortável","Forte"];
+
+const lista = k => Array.isArray(DADOS[k]) ? DADOS[k] : [];
+const VAGAS = lista("vagas");
+const LEADS = lista("leads");
+const SKILLS = lista("skills");
+const CATEGORIAS = lista("categorias");
+const PROJETOS = lista("projetos");
+const CURSOS = lista("cursos");
+const CVGERAL = lista("cvGeral");
+
+/* ===================================================================
+   HELPERS
+   =================================================================== */
+function el(tag,cls,html){const n=document.createElement(tag);if(cls)n.className=cls;if(html!=null)n.innerHTML=html;return n;}
+function esc(s){return String(s==null?"":s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));}
+function norm(s){return String(s==null?"":s).toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g,"");}
+function vazio(txt){return el("div","vazio",esc(txt));}
+function link(url,txt){
+  if(!url) return "";
+  return '<a class="vlink" href="'+esc(url)+'" target="_blank" rel="noopener noreferrer">'+esc(txt||t("acao.abrir"))+' ↗</a>';
+}
+/* Barra de cobertura com o traço da régua desenhado na posição configurada. */
+function barra(p){
+  const falta = p>=REGUA ? null : REGUA-p;
+  return '<div class="bar"><i class="'+(p>=REGUA?"":"low")+'" style="width:'+Math.max(0,Math.min(p,100))+'%"></i>'+
+    '<b style="left:'+REGUA+'%"></b></div>'+
+    '<div class="barlab"><span class="pct">'+p+'%</span><span>'+
+    (falta===null ? esc(t("regua.pronta",{r:REGUA})) : esc(t("regua.faltam",{n:falta,r:REGUA})))+'</span></div>';
+}
+function urlDaVaga(v){
+  if(v.url) return v.url;
+  if(v.linkedinId) return "https://www.linkedin.com/jobs/view/"+v.linkedinId+"/";
+  if(/^\d{6,}$/.test(String(v.id||""))) return "https://www.linkedin.com/jobs/view/"+v.id+"/";
+  return "";
+}
+function idDoLinkedIn(u){ const m=String(u).match(/\/jobs\/view\/(\d+)/); return m?m[1]:""; }
+
+/* ===================================================================
+   ESTADO — o que a pessoa marca
+   Portado do console da Juliana, com as proteções que ela ganhou na
+   marra. Cada guarda abaixo corresponde a um bug real.
+   =================================================================== */
+const CHAVE = "career-console-" + (DADOS.slug || "padrao");
+const VAZIO = {vagas:{}, manuais:{}, cv:[], cursos:[], niveis:{}, etapas:{}};
+
+/* Estágios válidos. Nomes antigos são traduzidos, nunca descartados em
+   silêncio: uma vaga num estágio desconhecido some de todas as abas. */
+const ESTAGIOS = ["progresso","aplicada","arquivada"];
+const LEGADO = {preparo:"progresso", inscrita:"aplicada", fora:"arquivada", analise:null, radar:null};
+function migrar(st){
+  if(!st || typeof st!=="object") return {};
+  const out={};
+  Object.keys(st).forEach(id=>{
+    const v=st[id];
+    if(ESTAGIOS.indexOf(v)>=0){ out[id]=v; return; }
+    if(Object.prototype.hasOwnProperty.call(LEGADO,v)){ const n=LEGADO[v]; if(n) out[id]=n; return; }
+    /* valor irreconhecível: volta para análise em vez de virar fantasma */
+  });
+  return out;
+}
+function normalizar(obj){
+  const e = Object.assign({}, JSON.parse(JSON.stringify(VAZIO)), obj||{});
+  e.vagas   = migrar(e.vagas);
+  if(!e.manuais || typeof e.manuais!=="object") e.manuais={};
+  if(!e.niveis  || typeof e.niveis !=="object") e.niveis={};
+  if(!e.etapas  || typeof e.etapas !=="object") e.etapas={};
+  if(!Array.isArray(e.cv))     e.cv=[];
+  if(!Array.isArray(e.cursos)) e.cursos=[];
+  return e;
+}
+function carregarLocal(){
+  let bruto=null;
+  try{ bruto=localStorage.getItem(CHAVE); }
+  catch(e){ return normalizar(null); }           // storage bloqueado
+  if(!bruto) return normalizar(null);
+  try{ return normalizar(JSON.parse(bruto)); }
+  catch(e){ return normalizar(null); }           // JSON corrompido
+}
+
+let estado = carregarLocal();
+let docRef = null, gravando = false, pendente = false, filtro = "";
+let podeLer = false;                             // capacidade `sample` presente
+let leitura = {status:"", msg:""};
+
+function salvarLocal(){ try{ localStorage.setItem(CHAVE, JSON.stringify(estado)); }catch(e){} }
+function sync(modo,txt){
+  const d=document.getElementById("dot"), s=document.getElementById("syncTxt");
+  if(!d||!s) return;
+  d.className = "dot" + (modo==="on"?" on":modo==="off"?" off":"");
+  s.textContent = txt;
+}
+/* Escrita no servidor com fila. Uma escrita em voo NÃO pode fazer a
+   próxima ser descartada — era assim que uma marcação sumia sem aviso. */
+function enviar(){
+  gravando=true;
+  docRef.set(Object.assign({},estado,{atualizadoEm:new Date().toISOString()}))
+    .then(()=>{ gravando=false; sync("on",t("sync.servidor")); escoar(); })
+    .catch(e=>{ gravando=false; sync("off",t("sync.local")+" ("+((e&&e.code)||"erro")+")"); escoar(); });
+}
+function escoar(){ if(pendente && docRef){ pendente=false; enviar(); } }
+function gravar(){
+  salvarLocal();
+  if(!docRef) return;
+  if(gravando){ pendente=true; return; }
+  enviar();
+}
+
+const estagio   = id => estado.vagas[id] || "analise";
+const lida      = id => VAGAS.find(v=>v.id===id) || null;
+const crua      = id => LEADS.find(l=>l.id===id) || null;
+const manual    = id => estado.manuais[id] || null;
+const porEstagio= e  => Object.keys(estado.vagas).filter(id=>estado.vagas[id]===e);
+const manuaisEm = e  => Object.keys(estado.manuais).map(k=>estado.manuais[k]).filter(m=>estagio(m.id)===e);
+const nivelDe   = id => estado.niveis[id] || 0;
+
+function mover(id,destino){
+  if(destino==="analise") delete estado.vagas[id]; else estado.vagas[id]=destino;
+  gravar(); render();
+}
+function apagarManual(id){
+  delete estado.manuais[id]; delete estado.vagas[id];
+  gravar(); render();
+}
+function alternarLista(chave,valor){
+  const arr = estado[chave];
+  const i = arr.indexOf(valor);
+  if(i>=0) arr.splice(i,1); else arr.push(valor);
+  gravar(); render();
+}
+function definirNivel(skillId,n){ estado.niveis[skillId]=n; gravar(); render(); }
+function alternarEtapa(projId,idx){
+  const arr = estado.etapas[projId] || (estado.etapas[projId]=[]);
+  arr[idx] = !arr[idx];
+  gravar(); render();
+}
+
+/* ===================================================================
+   CARTÕES DE VAGA
+   =================================================================== */
+function acoes(id,aba){
+  const st = el("div","status");
+  const op = aba==="analise"   ? [["progresso",t("acao.perseguir")],["arquivada",t("acao.arquivar")]]
+           : aba==="progresso" ? [["aplicada",t("acao.inscrevi")],["analise",t("acao.devolver")],["arquivada",t("acao.arquivar")]]
+           : aba==="aplicadas" ? [["progresso",t("acao.voltarProgresso")],["arquivada",t("acao.arquivar")]]
+           :                     [["analise",t("acao.voltarAnalise")]];
+  const destaque = aba==="analise" ? "progresso" : aba==="progresso" ? "aplicada" : null;
+  op.forEach(([d,lab])=>{
+    const b = el("button","st"+(d===destaque?" forte":""),esc(lab));
+    b.type="button"; b.onclick=()=>mover(id,d); st.appendChild(b);
+  });
+  if(manual(id)){
+    const b = el("button","st perigo",esc(t("acao.remover"))); b.type="button";
+    b.onclick=()=>apagarManual(id); st.appendChild(b);
+  }
+  return st;
+}
+function cabecalho(card,titulo,meta,url,pct){
+  const top = el("div","vtop");
+  top.appendChild(el("div","vtit",esc(titulo)));
+  if(pct!=null) top.appendChild(el("div","pct",pct+"%"));
+  card.appendChild(top);
+  if(meta) card.appendChild(el("div","vmeta",meta));
+  if(url)  card.appendChild(el("div",null,link(url)));
+}
+function metaDe(v){
+  const p=[];
+  if(v.empresa) p.push('<span class="emp">'+esc(v.empresa)+'</span>');
+  if(v.local) p.push(esc(v.local));
+  if(v.modalidade) p.push(esc(v.modalidade));
+  return p.join(" · ");
+}
+function classeDe(cob){ return cob>=REGUA ? " pronta" : cob>=REGUA-10 ? " quase" : ""; }
+
+function cardLido(v,aba){
+  const c = el("div","vaga"+classeDe(v.cob));
+  cabecalho(c, v.titulo, metaDe(v), urlDaVaga(v), v.cob);
+  if(typeof v.cob==="number") c.appendChild(el("div",null,barra(v.cob)));
+  if((v.tem||[]).length){
+    c.appendChild(el("div","reqlab",esc(t("progresso.puxar"))));
+    const box=el("div","chips"); v.tem.forEach(x=>box.appendChild(el("span","chip tem",esc(x)))); c.appendChild(box);
+  }
+  if((v.falta||[]).length){
+    c.appendChild(el("div","reqlab","Falta"));
+    const box=el("div","chips"); v.falta.forEach(x=>box.appendChild(el("span","chip falta",esc(x)))); c.appendChild(box);
+  }
+  if(v.nota) c.appendChild(el("div","nota"+(v.alerta?" alerta":""),esc(v.nota)));
+  c.appendChild(acoes(v.id,aba));
+  return c;
+}
+function cardProgresso(v){
+  const c = el("div","vaga"+classeDe(v.cob));
+  if(v.segmento) c.appendChild(el("div","seg",esc(v.segmento)));
+  cabecalho(c, v.titulo, metaDe(v), urlDaVaga(v), v.cob);
+  if(typeof v.cob==="number") c.appendChild(el("div",null,barra(v.cob)));
+
+  if(v.posic){
+    const b=el("div","bloco");
+    b.appendChild(el("div","bt",esc(t("progresso.posicionamento"))));
+    b.appendChild(el("p",null,esc(v.posic)));
+    c.appendChild(b);
+  }
+  const b2=el("div","bloco");
+  b2.appendChild(el("div","bt",esc(t("progresso.ajustes"))));
+  if((v.ajustesCv||[]).length){
+    const ul=el("div");
+    v.ajustesCv.forEach(a=>ul.appendChild(el("div","nota",esc(a))));
+    b2.appendChild(ul);
+  }
+  if((v.tem||[]).length){
+    b2.appendChild(el("div","reqlab",esc(t("progresso.puxar"))));
+    const box=el("div","chips");
+    v.tem.slice(0,5).forEach(x=>box.appendChild(el("span","chip tem",esc(x))));
+    b2.appendChild(box);
+  }
+  if((v.falta||[]).length){
+    b2.appendChild(el("div","reqlab",esc(t("progresso.endereçar"))));
+    const box=el("div","chips");
+    v.falta.forEach(x=>box.appendChild(el("span","chip falta",esc(x))));
+    b2.appendChild(box);
+    if(typeof v.cob==="number" && v.cob<REGUA) b2.appendChild(el("div","nota alerta",esc(t("abaixoDaRegua"))));
+  }
+  c.appendChild(b2);
+  c.appendChild(acoes(v.id,"progresso"));
+  return c;
+}
+function cardSemLeitura(o,aba,url){
+  const c = el("div","vaga");
+  cabecalho(c, o.titulo||"Vaga sem título", metaDe(o)||"Adicionada por você", url||urlDaVaga(o));
+  c.appendChild(el("div","nota",esc(t("semLeitura"))));
+  c.appendChild(acoes(o.id,aba));
+  return c;
+}
+function linhaLead(l,aba){
+  const r = el("div","lead");
+  const meta = [l.empresa,l.local,l.modalidade].filter(Boolean).map(esc).join(" · ");
+  const sinal = typeof l.sinal==="number" ? " · sinal "+l.sinal+"%" : "";
+  const u = urlDaVaga(l);
+  r.appendChild(el("div","lt","<strong>"+esc(l.titulo)+"</strong><em>"+meta+sinal+
+    (u?' · <a href="'+esc(u)+'" target="_blank" rel="noopener noreferrer">'+esc(t("acao.abrir"))+' ↗</a>':'')+"</em>"));
+  const a = acoes(l.id,aba);
+  a.style.marginTop="0"; a.style.paddingTop="0"; a.style.borderTop="0";
+  r.appendChild(a);
+  return r;
+}
+function qualquer(id,aba){
+  const v=lida(id);   if(v) return cardLido(v,aba);
+  const l=crua(id);   if(l) return linhaLead(l,aba);
+  const m=manual(id); if(m) return cardSemLeitura(m,aba,m.url);
+  return null;
+}
+function casa(x){
+  if(!filtro) return true;
+  return norm([x.titulo,x.empresa,x.local].filter(Boolean).join(" ")).indexOf(filtro)>=0;
+}
+
+/* ===================================================================
+   FORMULÁRIOS DE ENTRADA
+   =================================================================== */
+function adicionar(url,destino,msg){
+  const u=(url||"").trim();
+  if(!u){ msg(t("add.invalido"),true); return false; }
+  let ok=false;
+  try{ const p=new URL(u); ok=p.protocol==="http:"||p.protocol==="https:"; }catch(e){ ok=false; }
+  if(!ok){ msg(t("add.invalido"),true); return false; }
+
+  /* já conheço esta vaga? então é a mesma, não uma cópia */
+  const jid=idDoLinkedIn(u);
+  if(jid){
+    const j=lida(jid)||crua(jid);
+    if(j){ mover(jid,destino); msg(t("add.duplicada"),false); return true; }
+  }
+  const jaManual=Object.keys(estado.manuais).find(k=>estado.manuais[k].url===u);
+  if(jaManual){ mover(jaManual,destino); msg(t("add.duplicada"),false); return true; }
+
+  /* Date.now() sozinho colide: duas vagas no mesmo milissegundo dividiam
+     o id e uma apagava a outra. Sufixo aleatório resolve. */
+  const id="m"+Date.now().toString(36)+Math.random().toString(36).slice(2,8);
+  estado.manuais[id]={id:id, url:u, titulo:jid?("Vaga "+jid):u.replace(/^https?:\/\//,"").slice(0,60), empresa:"", linkedinId:jid||""};
+  if(destino!=="analise") estado.vagas[id]=destino;
+  gravar(); render();
+  msg(t("add.ok"),false);
+  return true;
+}
+function montarForm(destino){
+  const f = el("div","form");
+  f.appendChild(el("h4",null,esc(t("add.titulo"))));
+  f.appendChild(el("p",null,esc(t("add.texto"))));
+  const linha = el("div","linha");
+  const inp = document.createElement("input");
+  inp.type="url"; inp.placeholder=t("add.placeholder"); inp.setAttribute("aria-label",t("add.titulo"));
+  linha.appendChild(inp); f.appendChild(linha);
+  const b = el("button","btn",esc(t("add.botao"))); b.type="button";
+  const er = el("div","erro");
+  const msg = (txt,ruim)=>{ er.textContent=txt; er.style.color = ruim?"var(--crit)":"var(--ok)"; };
+  const envia = ()=>{ if(adicionar(inp.value,destino,msg)) inp.value=""; };
+  b.onclick=envia;
+  inp.addEventListener("keydown",ev=>{ if(ev.key==="Enter"){ ev.preventDefault(); envia(); } });
+  f.appendChild(b); f.appendChild(er);
+  return f;
+}
+/* Só aparece quando a capacidade `sample` existe. Sem ela o formulário
+   não é exibido — prometer leitura que não acontece é pior que não ter. */
+function montarColar(){
+  const f = el("div","form");
+  f.appendChild(el("h4",null,esc(t("colar.titulo"))));
+  f.appendChild(el("p",null,esc(t("colar.texto"))));
+  const ta = document.createElement("textarea");
+  ta.rows=5; ta.placeholder="https://…\n\n"+t("colar.texto");
+  f.appendChild(ta);
+  const b = el("button","btn",esc(leitura.status==="lendo"?t("colar.lendo"):t("colar.botao")));
+  b.type="button"; b.disabled = leitura.status==="lendo";
+  b.onclick = ()=>lerAnuncio(ta.value);
+  f.appendChild(b);
+  if(leitura.msg){
+    const m = el("div","erro",esc(leitura.msg));
+    m.style.color = leitura.status==="erro" ? "var(--crit)" : "var(--ok)";
+    f.appendChild(m);
+  }
+  return f;
+}
+async function lerAnuncio(fonte){
+  const m = String(fonte||"").match(/https?:\/\/\S+/);
+  const url = m ? m[0] : "";
+  const texto = String(fonte||"").replace(/https?:\/\/\S+/g," ").trim();
+  if(texto.length < 120){ leitura={status:"erro",msg:t("colar.curto")}; render(); return; }
+
+  leitura={status:"lendo",msg:""}; render();
+  try{
+    const sample = await window.claude.use("sample");
+    const r = await sample.json(
+      'Leia o anúncio de vaga abaixo e responda APENAS com JSON válido, sem markdown:\n' +
+      '{"titulo":"","empresa":"","local":"","modalidade":"","tem":[],"falta":[],"cob":0,"nota":""}\n' +
+      'Use "tem" para requisitos que o perfil abaixo cobre e "falta" para os que não cobre. ' +
+      '"cob" é a porcentagem inteira de cobertura. Se algo não estiver no texto, use string vazia.\n\n' +
+      'PERFIL: ' + JSON.stringify(DADOS.pessoa||{}) + '\n\nANÚNCIO:\n' + texto);
+    const id = "m"+Date.now().toString(36)+Math.random().toString(36).slice(2,8);
+    estado.manuais[id] = {id:id, url:url, titulo:r.titulo||"Vaga sem título", empresa:r.empresa||"",
+      local:r.local||"", modalidade:r.modalidade||""};
+    VAGAS.push({id:id, url:url, titulo:r.titulo||"Vaga sem título", empresa:r.empresa||"",
+      local:r.local||"", modalidade:r.modalidade||"", cob:Number(r.cob)||0,
+      tem:r.tem||[], falta:r.falta||[], nota:r.nota||""});
+    delete estado.manuais[id];   // já virou vaga lida; não precisa do esqueleto
+    gravar();
+    leitura={status:"ok",msg:'“'+(r.titulo||"vaga")+'” cadastrada. Confira a leitura e ajuste se precisar.'};
+  }catch(e){
+    leitura={status:"erro",msg:"Não consegui ler esse anúncio ("+((e&&e.code)||"erro")+")."};
+  }
+  render();
+}
+
+/* ===================================================================
+   ABAS
+   =================================================================== */
+function viewGeral(sec){
+  const vg = DADOS.visaoGeral || {};
+  sec.appendChild(el("h2",null,esc(t("geral.titulo"))));
+  if(vg.ondeEsta) sec.appendChild(el("p","lede",esc(vg.ondeEsta)));
+
+  const tiles = Array.isArray(vg.tiles) ? vg.tiles.slice() : [];
+  if(!tiles.length && VAGAS.length){
+    const prontas = VAGAS.filter(v=>v.cob>=REGUA && estagio(v.id)==="analise").length;
+    const quase   = VAGAS.filter(v=>v.cob<REGUA && v.cob>=REGUA-10 && estagio(v.id)==="analise").length;
+    tiles.push({k:"Prontas p/ candidatar", v:String(prontas), n:"cobertura ≥ "+REGUA+"%"});
+    tiles.push({k:"A um passo", v:String(quase), n:"entre "+(REGUA-10)+"% e "+(REGUA-1)+"%"});
+    tiles.push({k:"Em progresso", v:String(porEstagio("progresso").length), n:"posicionamento e CV"});
+    tiles.push({k:"Aplicadas", v:String(porEstagio("aplicada").length), n:"candidaturas enviadas"});
+  }
+  if(tiles.length){
+    const box = el("div","tiles");
+    tiles.forEach(x=>{
+      const d = el("div","tile");
+      d.appendChild(el("div","k",esc(x.k)));
+      d.appendChild(el("div","v",esc(x.v)));
+      if(x.n) d.appendChild(el("div","n",esc(x.n)));
+      box.appendChild(d);
+    });
+    sec.appendChild(box);
+  }
+  if(vg.proximoPasso){
+    sec.appendChild(el("h3",null,esc(t("geral.proximoPasso"))));
+    sec.appendChild(el("p",null,esc(vg.proximoPasso)));
+  }
+  if(vg.oQueFalta){
+    sec.appendChild(el("h3",null,esc(t("geral.oQueFalta"))));
+    sec.appendChild(el("p",null,esc(vg.oQueFalta)));
+  }
+  (vg.paragrafos||[]).forEach(p=>sec.appendChild(el("p",null,esc(p))));
+  if((vg.alertas||[]).length){
+    sec.appendChild(el("h3",null,esc(t("geral.alertas"))));
+    vg.alertas.forEach(a=>sec.appendChild(el("div","aviso",esc(a))));
+  }
+  sec.appendChild(el("h3",null,esc(t("geral.comoFunciona"))));
+  sec.appendChild(el("p",null,esc(t("geral.comoFuncionaTexto"))));
+}
+
+function viewAnalise(sec){
+  sec.appendChild(el("h2",null,esc(t("tab.analise"))));
+  sec.appendChild(el("p","lede",esc(t("analise.lede"))));
+  if(podeLer) sec.appendChild(montarColar());
+  sec.appendChild(montarForm("analise"));
+
+  const b = el("div","busca");
+  const inp = document.createElement("input");
+  inp.type="search"; inp.value=filtro; inp.placeholder=t("analise.buscar");
+  inp.setAttribute("aria-label",t("analise.buscar"));
+  inp.oninput = ev=>{ filtro=norm(ev.target.value); render(); 
+    const n=document.querySelector("#s-analise .busca input"); if(n){ n.focus(); n.setSelectionRange(n.value.length,n.value.length); } };
+  b.appendChild(inp);
+  sec.appendChild(b);
+
+  const minhas = manuaisEm("analise").filter(casa);
+  if(minhas.length){
+    sec.appendChild(el("h3",null,esc(t("analise.minhas"))));
+    minhas.forEach(m=>sec.appendChild(cardSemLeitura(m,"analise",m.url)));
+  }
+  const lidas = VAGAS.filter(v=>estagio(v.id)==="analise" && casa(v));
+  sec.appendChild(el("h3",null,esc(t("analise.lidas"))));
+  if(lidas.length) lidas.forEach(v=>sec.appendChild(cardLido(v,"analise")));
+  else sec.appendChild(vazio(filtro?t("vazio.busca"):t("vazio.analise")));
+
+  if(LEADS.length){
+    const cruas = LEADS.filter(l=>estagio(l.id)==="analise" && casa(l));
+    sec.appendChild(el("h3",null,esc(t("analise.cruas"))));
+    sec.appendChild(el("p","lede",esc(t("analise.cruasLede"))));
+    if(cruas.length) cruas.forEach(l=>sec.appendChild(linhaLead(l,"analise")));
+    else sec.appendChild(vazio(filtro?t("vazio.busca"):t("vazio.analise")));
+  }
+}
+
+function viewProgresso(sec){
+  sec.appendChild(el("h2",null,esc(t("tab.progresso"))));
+  sec.appendChild(el("p","lede",esc(t("progresso.lede"))));
+  sec.appendChild(montarForm("progresso"));
+  const ids = porEstagio("progresso");
+  if(!ids.length){ sec.appendChild(vazio(t("vazio.progresso"))); return; }
+  ids.forEach(id=>{
+    const v=lida(id);
+    if(v){ sec.appendChild(cardProgresso(v)); return; }
+    const l=crua(id);
+    if(l){ sec.appendChild(cardSemLeitura(l,"progresso",urlDaVaga(l))); return; }
+    const m=manual(id);
+    if(m) sec.appendChild(cardSemLeitura(m,"progresso",m.url));
+  });
+}
+
+function pilha(sec,est,aba,ledeKey,vazioKey){
+  sec.appendChild(el("h2",null,esc(t("tab."+aba))));
+  sec.appendChild(el("p","lede",esc(t(ledeKey))));
+  if(aba==="aplicadas") sec.appendChild(montarForm("aplicada"));
+  const ids = porEstagio(est);
+  if(!ids.length){ sec.appendChild(vazio(t(vazioKey))); return; }
+  ids.forEach(id=>{ const n=qualquer(id,aba); if(n) sec.appendChild(n); });
+}
+const viewAplicadas  = sec => pilha(sec,"aplicada","aplicadas","aplicadas.lede","vazio.aplicadas");
+const viewArquivadas = sec => pilha(sec,"arquivada","arquivadas","arquivadas.lede","vazio.arquivadas");
+
+function viewMercado(sec){
+  const p = DADOS.posicionamento || {};
+  sec.appendChild(el("h2",null,esc(t("tab.mercado"))));
+  if(p.titulo) sec.appendChild(el("p","lede",esc(p.titulo)));
+  if(p.alvo) sec.appendChild(el("p",null,esc(p.alvo)));
+  if((p.diferenciais||[]).length){
+    sec.appendChild(el("h3",null,esc(t("mercado.diferenciais"))));
+    p.diferenciais.forEach(x=>sec.appendChild(el("div","nota",esc(x))));
+  }
+  if((p.contra||[]).length){
+    sec.appendChild(el("h3",null,esc(t("mercado.contra"))));
+    p.contra.forEach(x=>sec.appendChild(el("div","nota alerta",esc(x))));
+  }
+  if((p.setores||[]).length){
+    sec.appendChild(el("h3",null,esc(t("mercado.setores"))));
+    const rolar = el("div","rolar");
+    const linhas = p.setores.map(s=>
+      "<tr><td><strong>"+esc(s.setor)+"</strong></td><td>"+esc(s.afinidade)+"</td><td>"+esc(s.porque)+"</td></tr>").join("");
+    rolar.innerHTML = "<table><thead><tr><th>Setor</th><th>Afinidade</th><th>Por quê</th></tr></thead><tbody>"+linhas+"</tbody></table>";
+    sec.appendChild(rolar);
+  }
+}
+
+/* Checklist genérico: usado por Ajustes de CV e por Estudos. */
+function checklist(sec,itens,chaveEstado,rotulo,porque,extra){
+  itens.forEach(it=>{
+    const valor = rotulo(it);
+    const marcado = estado[chaveEstado].indexOf(valor)>=0;
+    const lab = el("label","item"+(marcado?" ok":""));
+    const cb = document.createElement("input");
+    cb.type="checkbox"; cb.checked=marcado;
+    cb.onchange = ()=>alternarLista(chaveEstado,valor);
+    lab.appendChild(cb);
+    const txt = el("div");
+    txt.appendChild(el("span","it",esc(valor) + (extra?extra(it):"")));
+    const p = porque(it);
+    if(p) txt.appendChild(el("span","porque",esc(p)));
+    lab.appendChild(txt);
+    sec.appendChild(lab);
+  });
+  const feitos = itens.filter(it=>estado[chaveEstado].indexOf(rotulo(it))>=0).length;
+  sec.appendChild(el("div","fonte",feitos+" de "+itens.length+" concluídos"));
+}
+
+function viewCv(sec){
+  sec.appendChild(el("h2",null,esc(t("tab.cv"))));
+  sec.appendChild(el("p","lede",esc(t("cv.lede"))));
+  checklist(sec, CVGERAL, "cv", it=>it.t, it=>it.porque);
+}
+
+function viewCursos(sec){
+  sec.appendChild(el("h2",null,esc(t("tab.cursos"))));
+  sec.appendChild(el("p","lede",esc(t("cursos.lede"))));
+  checklist(sec, CURSOS, "cursos", it=>it.nome, it=>it.porque,
+    it=>{
+      const partes=[];
+      if(it.onde)  partes.push(esc(it.onde));
+      if(it.custo) partes.push(esc(it.custo));
+      let s = partes.length ? ' <span class="porque" style="display:inline">· '+partes.join(" · ")+'</span>' : "";
+      if(it.quando) s += '<span class="quando">'+esc(it.quando)+'</span>';
+      if(it.link)   s += ' <a href="'+esc(it.link)+'" target="_blank" rel="noopener noreferrer">↗</a>';
+      return s;
+    });
+}
+
+/* Frequência de um requisito entre as vagas ainda em jogo (não arquivadas).
+   Obrigatório pesa 1, desejável 0,5 — mesma conta do console do Victor. */
+function frequencia(skillId){
+  let f=0;
+  VAGAS.filter(v=>estagio(v.id)!=="arquivada").forEach(v=>{
+    const r=(v.requisitos||[]).find(r=>r.skillId===skillId);
+    if(r) f += r.tipo==="desejavel" ? 0.5 : 1;
+  });
+  return f;
+}
+function viewSkills(sec){
+  sec.appendChild(el("h2",null,esc(t("tab.skills"))));
+  sec.appendChild(el("p","lede",esc(t("skills.lede"))));
+
+  const gaps = SKILLS.map(s=>({s, f:frequencia(s.id), n:nivelDe(s.id)}))
+    .filter(g=>g.f>0 && g.n<2)
+    .sort((a,b)=> b.f-a.f || a.n-b.n);
+  if(gaps.length){
+    sec.appendChild(el("h3",null,esc(t("skills.gaps"))));
+    gaps.slice(0,8).forEach(g=>{
+      const r = el("div","lead");
+      r.appendChild(el("div","lt","<strong>"+esc(g.s.nome)+"</strong><em>pedido em "+g.f+
+        " vaga(s) · seu nível: "+esc(NIVEIS[g.n]||g.n)+"</em>"));
+      sec.appendChild(r);
+    });
+  }
+
+  sec.appendChild(el("h3",null,esc(t("skills.catalogo"))));
+  const grupos = CATEGORIAS.length ? CATEGORIAS : [{id:null,nome:""}];
+  grupos.forEach(cat=>{
+    const doGrupo = SKILLS.filter(s=> cat.id==null || s.categoria===cat.id);
+    if(!doGrupo.length) return;
+    if(cat.nome) sec.appendChild(el("div","reqlab",esc(cat.nome)));
+    doGrupo.forEach(s=>{
+      const r = el("div","skrow");
+      const f = frequencia(s.id);
+      r.appendChild(el("div",null,"<strong>"+esc(s.nome)+"</strong>"+
+        (f?'<span class="cat">pedido em '+f+" vaga(s)</span>":"")));
+      const niv = el("div","niv");
+      NIVEIS.forEach((rot,n)=>{
+        const b = el("button","nivbtn"+(nivelDe(s.id)===n?" on":""),String(n));
+        b.type="button"; b.title=rot; b.setAttribute("aria-label",s.nome+": "+rot);
+        b.onclick=()=>definirNivel(s.id,n);
+        niv.appendChild(b);
+      });
+      r.appendChild(niv);
+      sec.appendChild(r);
+    });
+  });
+}
+
+function viewProjetos(sec){
+  sec.appendChild(el("h2",null,esc(t("tab.projetos"))));
+  sec.appendChild(el("p","lede",esc(t("projetos.lede"))));
+  PROJETOS.forEach(p=>{
+    const c = el("div","vaga");
+    if(p.contexto) c.appendChild(el("div","seg",esc(p.contexto)));
+    c.appendChild(el("div","vtit",esc(p.nome)));
+    if(p.descricao) c.appendChild(el("div","vmeta",esc(p.descricao)));
+    const etapas = p.etapas||[];
+    const marcas = estado.etapas[p.id]||[];
+    etapas.forEach((e,i)=>{
+      const nome = typeof e==="string" ? e : e.nome;
+      const lab = el("label","item"+(marcas[i]?" ok":""));
+      const cb = document.createElement("input");
+      cb.type="checkbox"; cb.checked=!!marcas[i];
+      cb.onchange=()=>alternarEtapa(p.id,i);
+      lab.appendChild(cb);
+      lab.appendChild(el("div",null,'<span class="it">'+esc(nome)+"</span>"));
+      c.appendChild(lab);
+    });
+    if(etapas.length){
+      const feitas = etapas.filter((e,i)=>marcas[i]).length;
+      c.appendChild(el("div",null,barra(Math.round(100*feitas/etapas.length))));
+    }
+    if((p.skills||[]).length){
+      const box=el("div","chips");
+      p.skills.forEach(id=>{
+        const s=SKILLS.find(x=>x.id===id);
+        box.appendChild(el("span","chip",esc(s?s.nome:id)));
+      });
+      c.appendChild(box);
+    }
+    sec.appendChild(c);
+  });
+  if(!PROJETOS.length) sec.appendChild(vazio("Nenhum projeto cadastrado."));
+}
+
+function viewMetodo(sec){
+  const m = DADOS.metodo || {};
+  sec.appendChild(el("h2",null,esc(t("tab.metodo"))));
+  sec.appendChild(el("p","lede",esc(t("metodo.lede"))));
+  const dl = el("dl","metodo");
+  Object.keys(m).forEach(k=>{
+    dl.appendChild(el("dt",null,esc(k)));
+    dl.appendChild(el("dd",null,esc(m[k])));
+  });
+  sec.appendChild(dl);
+}
+
+/* ===================================================================
+   REGISTRO DE ABAS
+   `needs` é a chave de dados que a aba exige. Aba escolhida sem os
+   dados dela é pulada com aviso no console — melhor que uma casca vazia.
+   =================================================================== */
+const TABS = {
+  geral:      {needs:null,              render:viewGeral},
+  analise:    {needs:"vagas",           render:viewAnalise},
+  progresso:  {needs:"vagas",           render:viewProgresso},
+  mercado:    {needs:"posicionamento",  render:viewMercado},
+  cv:         {needs:"cvGeral",         render:viewCv},
+  cursos:     {needs:"cursos",          render:viewCursos},
+  skills:     {needs:"skills",          render:viewSkills},
+  projetos:   {needs:"projetos",        render:viewProjetos},
+  aplicadas:  {needs:"vagas",           render:viewAplicadas},
+  arquivadas: {needs:"vagas",           render:viewArquivadas},
+  metodo:     {needs:"metodo",          render:viewMetodo},
+};
+const PADRAO = ["geral","analise","aplicadas","arquivadas"];
+function temDados(k){
+  if(!k) return true;
+  const d = DADOS[k];
+  if(Array.isArray(d)) return d.length>0;
+  return !!d && Object.keys(d).length>0;
+}
+const ABAS = (Array.isArray(DADOS.tabs) && DADOS.tabs.length ? DADOS.tabs : PADRAO).filter(id=>{
+  if(!TABS[id]){ console.warn("[console] aba desconhecida, ignorada:", id); return false; }
+  if(!temDados(TABS[id].needs)){
+    console.warn("[console] aba \""+id+"\" pedida sem os dados de \""+TABS[id].needs+"\" — pulada.");
+    return false;
+  }
+  return true;
+});
+
+/* ===================================================================
+   RENDER
+   =================================================================== */
+let aberta = ABAS[0] || null;
+
+function contagem(id){
+  if(id==="analise")    return VAGAS.filter(v=>estagio(v.id)==="analise").length +
+                               LEADS.filter(l=>estagio(l.id)==="analise").length +
+                               manuaisEm("analise").length;
+  if(id==="progresso")  return porEstagio("progresso").length;
+  if(id==="aplicadas")  return porEstagio("aplicada").length;
+  if(id==="arquivadas") return porEstagio("arquivada").length;
+  if(id==="cursos")     return CURSOS.length;
+  if(id==="projetos")   return PROJETOS.length;
+  return 0;
+}
+function montarNav(){
+  const nav = document.getElementById("tabs");
+  nav.innerHTML = "";
+  ABAS.forEach(id=>{
+    const b = el("button","tab");
+    b.type="button"; b.role="tab"; b.id="tab-"+id;
+    b.setAttribute("aria-controls","s-"+id);
+    b.setAttribute("aria-selected", id===aberta ? "true":"false");
+    const n = contagem(id);
+    b.innerHTML = esc(t("tab."+id)) + (n ? ' <span class="cnt">'+n+"</span>" : "");
+    b.onclick = ()=>abrir(id);
+    nav.appendChild(b);
+  });
+}
+function abrir(id){
+  aberta = id;
+  try{ location.hash = id; }catch(e){}
+  render();
+  window.scrollTo({top:0,behavior:"instant"});
+}
+function render(){
+  montarNav();
+  const wrap = document.getElementById("wrap");
+  wrap.innerHTML = "";
+  if(!ABAS.length){
+    wrap.appendChild(el("div","aviso",
+      "<strong>Console sem dados.</strong> Preencha <code>data/console.json</code> e rode <code>build.py</code>. "+
+      "Veja <code>exemplo/console.json</code> para um modelo completo."));
+    return;
+  }
+  const sec = el("section","sec");
+  sec.id = "s-"+aberta;
+  sec.setAttribute("role","tabpanel");
+  sec.setAttribute("aria-labelledby","tab-"+aberta);
+  TABS[aberta].render(sec);
+  wrap.appendChild(sec);
+  if(DADOS.fonte) wrap.appendChild(el("p","fonte",esc(DADOS.fonte)));
+}
+
+/* ===================================================================
+   BOOT
+   =================================================================== */
+(function(){
+  const p = DADOS.pessoa || {};
+  document.getElementById("titulo").textContent = p.tituloConsole || (p.nome ? p.nome+" — Career Console" : "Career Console");
+  document.getElementById("eyebrow").textContent = [p.nome,p.cargo].filter(Boolean).join(" · ");
+  if(p.tituloConsole || p.nome) document.title = document.getElementById("titulo").textContent;
+
+  const h = (location.hash||"").replace("#","");
+  if(ABAS.indexOf(h)>=0) aberta = h;
+  render();
+  sync("", t("sync.local"));
+})();
+
+/* As duas capacidades são opcionais e detectadas em separado: sem `db` o
+   console cai no navegador; sem `sample` o formulário de colar anúncio
+   simplesmente não aparece. O arquivo é o mesmo nos dois casos. */
+(async function(){
+  if(!(window.claude && window.claude.use)){ sync("off", t("sync.local")); return; }
+
+  try{
+    if(await window.claude.use("sample")){ podeLer = true; render(); }
+  }catch(e){ podeLer = false; }
+
+  let api = null;
+  try{ api = await window.claude.use("db"); }catch(e){ api = null; }
+  if(!api){ sync("off", t("sync.local")); return; }
+
+  docRef = api.doc("estado/console");
+  docRef.onSnapshot(snap=>{
+    /* Enquanto há escrita local em voo ou enfileirada, o snapshot é
+       histórico: adotá-lo apagaria a edição que ainda não subiu. */
+    if(gravando || pendente){ sync("on", t("sync.servidor")); return; }
+    const d = snap.exists ? snap.data() : null;
+    if(d){
+      const limpo = normalizar(d);
+      const precisaRegravar = JSON.stringify(limpo.vagas) !== JSON.stringify(d.vagas||{});
+      estado = limpo;
+      salvarLocal(); render();
+      /* o servidor guardava nome de estágio antigo: normaliza lá também */
+      if(precisaRegravar) gravar();
+    }
+    sync("on", t("sync.servidor"));
+  }, e=>{ sync("off", t("sync.local")+" ("+((e&&e.code)||"erro")+")"); });
+})();
+</script>

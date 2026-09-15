@@ -1,10 +1,12 @@
 #!/usr/bin/env python3
-"""Inlines console.json into engine/console.html, producing a standalone page.
+"""Harness de teste: injeta um JSON no motor da skill e gera a página.
 
 Only the standard library — whoever unpacks this may have nothing installed.
 
-    python3 build.py                              # data/console.json -> dist/index.html
-    python3 build.py --data exemplo/console.json
+Na prática quem gera o console é o Claude, seguindo skill/career-console.
+Este script existe para validar o motor sem passar por uma conversa.
+
+    python3 build.py                              # exemplo/console.json -> dist/index.html
 """
 
 import argparse
@@ -79,8 +81,8 @@ def validar(dados):
 
 def main():
     ap = argparse.ArgumentParser(description="Gera o console a partir do motor + dados.")
-    ap.add_argument("--data", default="data/console.json")
-    ap.add_argument("--engine", default="engine/console.html")
+    ap.add_argument("--data", default="exemplo/console.json")
+    ap.add_argument("--engine", default="skill/career-console/assets/console.html")
     ap.add_argument("--out", default="dist/index.html")
     ap.add_argument("--force", action="store_true", help="gera mesmo com erros de validação")
     args = ap.parse_args()

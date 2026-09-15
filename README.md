@@ -1,7 +1,8 @@
 # Career Console — skill
 
 Um painel pessoal de transição de carreira: as vagas que interessam, quanto de
-cada uma o perfil da pessoa cobre, o que ajustar no CV e o que estudar.
+cada uma o perfil da pessoa cobre, e o que se repete como lacuna entre as
+candidaturas.
 
 Ninguém edita JSON nem roda build. A pessoa **instala a skill no próprio
 Claude**, conversa, e recebe o painel publicado.
@@ -9,13 +10,13 @@ Claude**, conversa, e recebe o painel publicado.
 ```
 skill/career-console/          ← o produto
 ├── SKILL.md                   instruções: entrevistar, analisar, gerar, publicar
-├── assets/console.html        o motor (11 abas, CSS e JS, ~50KB)
+├── assets/console.html        o motor (5 abas fixas, CSS e JS, ~43KB)
 └── references/
-    ├── entrevista.md          o roteiro de perguntas
+    ├── entrevista.md          as 4 perguntas fixas, texto literal
     ├── analise.md             como calcular cobertura sem inflar
     └── schema.md              o contrato dos dados
 
-exemplo/console.json           exemplo completo, todas as abas (referência e fixture)
+exemplo/console.json           exemplo completo (referência e fixture)
 build.py                       harness de teste: valida o motor sem passar por uma conversa
 ```
 
@@ -23,8 +24,9 @@ build.py                       harness de teste: valida o motor sem passar por u
 
 1. Instala `career-console.skill` no Claude dela.
 2. Diz algo como *"me ajuda a organizar minha busca de emprego"*.
-3. O Claude entrevista: quem ela é, o que quer, e pede que **cole os anúncios**
-   das vagas (o texto, não só o link — a página não consegue abrir URLs).
+3. O Claude manda as 4 perguntas fixas de uma vez (currículo/LinkedIn, cargos
+   alvo, localização, e **3 a 5 anúncios de vaga colados** — o texto, não só
+   o link, porque a página não consegue abrir URLs sozinha).
 4. O Claude lê cada anúncio, calcula a cobertura, monta os dados e publica o
    console como Artifact.
 
@@ -34,8 +36,8 @@ mudou, recalcula"*. O Claude republica na mesma URL.
 ## O que o painel faz sozinho
 
 O HTML publicado é autocontido — sem script externo, sem `fetch`. O que a pessoa
-marca nele (perseguir, me inscrevi, arquivar, nível numa skill) fica no `db` do
-Claude, sincronizando entre aparelhos, ou no navegador quando não houver `db`.
+marca nele (perseguir, me inscrevi, arquivar) fica no `db` do Claude,
+sincronizando entre aparelhos, ou no navegador quando não houver `db`.
 
 Essa separação é proposital: o JSON é a análise de mercado, o estado é o que a
 pessoa decidiu. Regerar a análise com vagas novas não apaga as decisões dela.
@@ -49,11 +51,20 @@ As duas capacidades são opcionais e degradam sozinhas:
 
 ## As abas
 
-`geral`, `analise`, `progresso`, `mercado`, `cv`, `cursos`, `skills`,
-`projetos`, `aplicadas`, `arquivadas`, `metodo`.
+Cinco, fixas, sempre nesta ordem, sem seleção: `analise`, `progresso`,
+`aplicadas`, `arquivadas`, `mercado`.
 
-O Claude deduz quais ligar a partir do que a entrevista rendeu e confirma antes
-de publicar. Uma aba só aparece se os dados dela existirem.
+As quatro primeiras são o funil: uma vaga entra em análise, quando a pessoa
+decide persegui-la vai para progresso, ao se candidatar vira aplicada, e o
+que é descartado vai para arquivadas. A quinta, `mercado`, não é conteúdo
+escrito uma vez — é calculada toda vez que abre: cruza o `falta[]` das vagas
+aplicadas e mostra o que se repete entre elas, com sugestão de ajuste de CV e
+de curso quando houver uma cadastrada em `sugestoes`.
+
+Não há campo para escolher outras abas. É assim de propósito: as quatro do
+funil são o destino dos botões do painel, e um teste real mostrou que tirar
+uma delas faz uma vaga movida para lá desaparecer sem aviso — o motor força
+as cinco por construção, então esse bug deixou de ser possível.
 
 ## Testar o motor sem conversar
 

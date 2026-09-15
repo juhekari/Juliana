@@ -1,28 +1,22 @@
 # Contrato dos dados
 
-O objeto injetado no motor. Só `tabs` é obrigatório. Nome de campo errado não dá
-erro: a aba simplesmente não aparece. Confira contra esta lista.
+O objeto injetado no motor. Nome de campo errado não dá erro: o conteúdo
+simplesmente não aparece em lugar nenhum. Confira contra esta lista.
 
-## Abas e o que cada uma exige
+## As 5 abas — fixas, não configuráveis
 
-Uma aba pedida em `tabs` só aparece se o campo de dados dela existir e não
-estiver vazio.
+Todo console tem exatamente estas cinco, sempre nesta ordem. Não existe campo
+para escolher ou tirar aba — é assim por construção, porque as quatro
+primeiras são o destino dos botões "Vou perseguir" / "Me inscrevi" / "Arquivar":
+tirar uma delas faria uma vaga movida para lá desaparecer sem aviso.
 
-| aba | exige | mostra |
+| aba | fonte | mostra |
 |---|---|---|
-| `geral` | — | tiles, onde está, o que falta, próximo passo, alertas |
-| `analise` | `vagas` | fila de triagem: perseguir ou arquivar |
+| `analise` | `vagas`, `leads` | fila de triagem: perseguir ou arquivar |
 | `progresso` | `vagas` | as perseguidas, com posicionamento e ajustes de CV |
-| `mercado` | `posicionamento` | onde ganha, onde perde, afinidade por setor |
-| `cv` | `cvGeral` | checklist de ajustes que valem para todas as candidaturas |
-| `cursos` | `cursos` | estudos e certificações, cada um ligado a um requisito real |
-| `skills` | `skills` | nível por requisito (0–3) e as maiores lacunas |
-| `projetos` | `projetos` | projetos de portfólio com etapas marcáveis |
 | `aplicadas` | `vagas` | onde se candidatou de fato |
 | `arquivadas` | `vagas` | descartadas, para não reavaliar duas vezes |
-| `metodo` | `metodo` | como a análise foi feita e o que ela não garante |
-
-Padrão razoável para a maioria: `["geral","analise","progresso","aplicadas","arquivadas"]`.
+| `mercado` | `vagas[].falta` + `sugestoes` | cruzamento das lacunas repetidas entre as vagas aplicadas |
 
 ## Campos
 
@@ -30,22 +24,10 @@ Padrão razoável para a maioria: `["geral","analise","progresso","aplicadas","a
 {
   "slug": "nome-curto",        // separa o armazenamento local de outros consoles
   "regua": 80,                 // % de cobertura a partir da qual vale candidatar
-  "tabs": ["geral", "analise", "aplicadas", "arquivadas"],
 
   "pessoa": {
     "nome": "", "cargo": "",
-    "tituloConsole": "",       // vira o <title> e o cabeçalho
-    "alvos": [], "locaisAceitos": []
-  },
-
-  "visaoGeral": {
-    "ondeEsta": "",            // parágrafo de abertura
-    "oQueFalta": "",           // a lacuna que mais aparece — o achado principal
-    "proximoPasso": "",        // a única coisa a fazer se só desse para fazer uma
-    "paragrafos": [],          // parágrafos extras
-    "alertas": [],             // avisos em destaque
-    "tiles": [{"k": "rótulo", "v": "5", "n": "nota de rodapé"}]
-                               // omita e o motor calcula os tiles do funil sozinho
+    "tituloConsole": ""        // vira o <title> e o cabeçalho
   },
 
   "vagas": [{
@@ -53,12 +35,11 @@ Padrão razoável para a maioria: `["geral","analise","progresso","aplicadas","a
     "titulo": "", "empresa": "", "local": "", "modalidade": "",
     "url": "https://",
     "segmento": "",            // contexto curto, aparece como etiqueta
-    "cob": 82,                 // 0–100
+    "cob": 82,                 // 0–100, número — "82" em string não desenha a barra
     "tem": [], "falta": [],    // requisitos, com as palavras do anúncio
     "posic": "",               // como se posicionar nesta vaga
     "ajustesCv": [],           // ajustes específicos desta vaga
-    "nota": "", "alerta": false, // alerta:true destaca a nota em laranja
-    "requisitos": [{"skillId": "sql", "tipo": "obrigatorio"}]  // só p/ a aba skills
+    "nota": "", "alerta": false // alerta:true destaca a nota em laranja
   }],
 
   "leads": [{                  // vagas ainda não lidas: sinal, não cobertura
@@ -66,44 +47,44 @@ Padrão razoável para a maioria: `["geral","analise","progresso","aplicadas","a
     "modalidade": "", "url": "", "sinal": 88
   }],
 
-  "posicionamento": {
-    "titulo": "",              // a tese em uma frase
-    "alvo": "",                // parágrafo sobre o alvo real
-    "diferenciais": [], "contra": [],
-    "setores": [{"setor": "", "afinidade": "Direta", "porque": ""}]
+  "sugestoes": {
+    // a chave é o texto EXATO de um "falta" que se repete entre vagas —
+    // é assim que a aba mercado liga o padrão à recomendação
+    "Airflow como dono do orquestrador": {
+      "cv": "Frase pronta para o CV/LinkedIn atacando esse item",
+      "curso": {"nome": "", "link": ""}   // ou uma string simples, sem link
+    }
   },
 
-  "cvGeral": [{"t": "o ajuste", "porque": "por que importa"}],
-
-  "cursos": [{
-    "nome": "", "onde": "", "link": "",
-    "quando": "Agora",         // etiqueta livre: "Agora", "Depois", "Só na trilha X"
-    "custo": "", "porque": ""  // "porque" deve citar a vaga que pediu isso
-  }],
-
-  "categorias": [{"id": "dados", "nome": "Dados e modelagem"}],
-  "skills": [{"id": "sql", "nome": "SQL avançado", "categoria": "dados"}],
-
-  "projetos": [{
-    "id": "p-001", "nome": "", "contexto": "", "descricao": "",
-    "skills": ["sql"],
-    "etapas": [{"nome": "primeira etapa"}]
-  }],
-
-  "metodo": {"Varredura": "", "Cobertura": "", "Limite": ""},
-                               // vira lista de definições; as chaves são os títulos
   "fonte": "",                 // linha de rodapé
 
-  "ui": {"tab.geral": "Overview"}
+  "ui": {"tab.analise": "Jobs to review"}
                                // sobrescreve rótulos; chave ausente cai no pt-BR
 }
 ```
+
+## Como `mercado` calcula o cruzamento
+
+Não é texto escrito uma vez — é calculado toda vez que a aba abre:
+
+1. Pega as vagas em estágio `aplicada`. Se não houver nenhuma ainda, usa
+   `analise` + `progresso` como aproximação e avisa que é preliminar.
+2. Junta os `falta[]` dessas vagas e conta quantas vezes cada texto se repete
+   **exatamente** — por isso é essencial escrever a mesma lacuna com as
+   mesmas palavras em vagas diferentes (`analise.md` cobre isso).
+3. O que aparece 2+ vezes vira "o que se repete", com a contagem
+   ("faltou em N de T vagas") e a sugestão de `sugestoes[aquele texto]`, se
+   existir.
+4. O que aparece 1 vez só vai para uma lista secundária, sem sugestão.
 
 ## Detalhes que quebram sem avisar
 
 - **`id` repetido entre `vagas` e `leads`** corrompe o funil: o estágio é
   guardado por `id`, então as duas viram a mesma coisa.
-- **`cob` é número**, não string. `"82"` não desenha a barra.
-- **`etapas`** aceita `[{"nome": "..."}]` ou `["..."]`.
+- **Texto de `falta` inconsistente entre vagas** (mesma lacuna, palavras
+  diferentes) impede o cruzamento de achar o padrão — ele conta strings
+  exatas, não sinônimos.
+- **Chave de `sugestoes` que não bate com nenhum `falta`** nunca aparece;
+  `build.py` avisa sobre isso.
 - **Traduzir a interface**: sobrescreva só as chaves que quiser em `ui`. As
   chaves disponíveis estão em `UI_PADRAO`, no topo do bloco de script do motor.

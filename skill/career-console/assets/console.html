@@ -211,17 +211,10 @@ window.__CONSOLE__ = /*__DADOS__*/ null /*__FIM__*/;
    =================================================================== */
 const DADOS = window.__CONSOLE__ || {};
 const UI_PADRAO = {
-  "tab.geral":"Visão geral", "tab.analise":"Vagas para análise",
+  "tab.analise":"Vagas para análise",
   "tab.progresso":"Vagas em progresso", "tab.mercado":"Posicionamento de mercado",
-  "tab.cv":"Ajustes de CV", "tab.cursos":"Estudos e certificações",
-  "tab.skills":"Requisitos e nível", "tab.projetos":"Projetos",
   "tab.aplicadas":"Vagas aplicadas", "tab.arquivadas":"Vagas arquivadas",
-  "tab.metodo":"Método",
-  "geral.titulo":"Onde você está", "geral.comoFunciona":"Como este console funciona",
-  "geral.oQueFalta":"O que falta", "geral.proximoPasso":"Próximo passo",
-  "geral.alertas":"Atenção",
-  "geral.comoFuncionaTexto":"A vaga entra em Vagas para análise. Quando você decide persegui-la, vai para Vagas em progresso, onde ficam o posicionamento e os ajustes de CV daquela vaga. Ao se inscrever, clique em Me inscrevi e ela cai em Vagas aplicadas.",
-  "analise.lede":"Tudo que a varredura trouxe e ainda não foi decidido.",
+  "analise.lede":"Tudo que a varredura trouxe e ainda não foi decidido. A vaga entra aqui; quando você decide persegui-la, vai para Vagas em progresso, onde ficam o posicionamento e os ajustes de CV daquela vaga. Ao se inscrever, clique em Me inscrevi e ela cai em Vagas aplicadas.",
   "analise.lidas":"Descrição lida — cobertura real",
   "analise.cruas":"Descrição ainda não lida — só sinal de palavra-chave",
   "analise.cruasLede":"O percentual aqui é casamento grosseiro de termo, não cobertura. Não decida por ele.",
@@ -232,14 +225,15 @@ const UI_PADRAO = {
   "progresso.puxar":"Puxe para o topo", "progresso.endereçar":"Endereçar na carta ou na entrevista",
   "aplicadas.lede":"Onde você de fato se inscreveu — pelo console ou por fora dele.",
   "arquivadas.lede":"Descartadas. Ficam guardadas para você não reavaliar a mesma vaga duas vezes.",
-  "mercado.diferenciais":"Onde você ganha", "mercado.contra":"Onde você perde",
-  "mercado.setores":"Afinidade por setor",
-  "cv.lede":"Ajustes que valem para todas as candidaturas. Marque o que já fez.",
-  "cursos.lede":"Cada item responde a um requisito que apareceu nas vagas lidas.",
-  "skills.lede":"Seu nível em cada requisito. Marque de 0 a 3.",
-  "skills.gaps":"Maiores lacunas", "skills.catalogo":"Catálogo",
-  "projetos.lede":"Projetos que viram evidência no CV. Marque as etapas concluídas.",
-  "metodo.lede":"Como esta análise foi feita, e o que ela não garante.",
+  "mercado.lede":"Cruzamento das vagas em que você já se candidatou: o que se repete não é falta de sorte, é o que vale ajustar antes da próxima.",
+  "mercado.preliminar":"Ainda sem candidatura registrada. Esta leitura usa as vagas em análise e em progresso como aproximação — vale menos que o cruzamento real, que aparece aqui assim que você marcar “Me inscrevi” em alguma.",
+  "mercado.semDados":"Nenhuma vaga cadastrada ainda. O posicionamento de mercado aparece assim que houver vagas para cruzar.",
+  "mercado.padrao":"O que se repete",
+  "mercado.semPadrao":"Nada se repetiu entre as vagas ainda — cada lacuna listada apareceu uma vez só.",
+  "mercado.unicos":"Apareceu uma vez",
+  "mercado.frequencia":"faltou em {n} de {t} vagas",
+  "mercado.cv":"Ajuste de CV ou LinkedIn",
+  "mercado.curso":"Curso sugerido",
   "acao.perseguir":"Vou perseguir", "acao.arquivar":"Arquivar",
   "acao.inscrevi":"Me inscrevi", "acao.devolver":"Devolver para análise",
   "acao.voltarProgresso":"Voltar para progresso", "acao.voltarAnalise":"Voltar para análise",
@@ -271,16 +265,10 @@ const t = (k,vars) => {
   return s;
 };
 const REGUA = typeof DADOS.regua === "number" ? DADOS.regua : 80;
-const NIVEIS = DADOS.niveis || ["Não iniciado","Aprendendo","Confortável","Forte"];
 
 const lista = k => Array.isArray(DADOS[k]) ? DADOS[k] : [];
 const VAGAS = lista("vagas");
 const LEADS = lista("leads");
-const SKILLS = lista("skills");
-const CATEGORIAS = lista("categorias");
-const PROJETOS = lista("projetos");
-const CURSOS = lista("cursos");
-const CVGERAL = lista("cvGeral");
 
 /* ===================================================================
    HELPERS
@@ -315,7 +303,7 @@ function idDoLinkedIn(u){ const m=String(u).match(/\/jobs\/view\/(\d+)/); return
    marra. Cada guarda abaixo corresponde a um bug real.
    =================================================================== */
 const CHAVE = "career-console-" + (DADOS.slug || "padrao");
-const VAZIO = {vagas:{}, manuais:{}, cv:[], cursos:[], niveis:{}, etapas:{}};
+const VAZIO = {vagas:{}, manuais:{}};
 
 /* Estágios válidos. Nomes antigos são traduzidos, nunca descartados em
    silêncio: uma vaga num estágio desconhecido some de todas as abas. */
@@ -336,10 +324,6 @@ function normalizar(obj){
   const e = Object.assign({}, JSON.parse(JSON.stringify(VAZIO)), obj||{});
   e.vagas   = migrar(e.vagas);
   if(!e.manuais || typeof e.manuais!=="object") e.manuais={};
-  if(!e.niveis  || typeof e.niveis !=="object") e.niveis={};
-  if(!e.etapas  || typeof e.etapas !=="object") e.etapas={};
-  if(!Array.isArray(e.cv))     e.cv=[];
-  if(!Array.isArray(e.cursos)) e.cursos=[];
   return e;
 }
 function carregarLocal(){
@@ -385,7 +369,6 @@ const crua      = id => LEADS.find(l=>l.id===id) || null;
 const manual    = id => estado.manuais[id] || null;
 const porEstagio= e  => Object.keys(estado.vagas).filter(id=>estado.vagas[id]===e);
 const manuaisEm = e  => Object.keys(estado.manuais).map(k=>estado.manuais[k]).filter(m=>estagio(m.id)===e);
-const nivelDe   = id => estado.niveis[id] || 0;
 
 function mover(id,destino){
   if(destino==="analise") delete estado.vagas[id]; else estado.vagas[id]=destino;
@@ -393,18 +376,6 @@ function mover(id,destino){
 }
 function apagarManual(id){
   delete estado.manuais[id]; delete estado.vagas[id];
-  gravar(); render();
-}
-function alternarLista(chave,valor){
-  const arr = estado[chave];
-  const i = arr.indexOf(valor);
-  if(i>=0) arr.splice(i,1); else arr.push(valor);
-  gravar(); render();
-}
-function definirNivel(skillId,n){ estado.niveis[skillId]=n; gravar(); render(); }
-function alternarEtapa(projId,idx){
-  const arr = estado.etapas[projId] || (estado.etapas[projId]=[]);
-  arr[idx] = !arr[idx];
   gravar(); render();
 }
 
@@ -625,48 +596,6 @@ async function lerAnuncio(fonte){
 /* ===================================================================
    ABAS
    =================================================================== */
-function viewGeral(sec){
-  const vg = DADOS.visaoGeral || {};
-  sec.appendChild(el("h2",null,esc(t("geral.titulo"))));
-  if(vg.ondeEsta) sec.appendChild(el("p","lede",esc(vg.ondeEsta)));
-
-  const tiles = Array.isArray(vg.tiles) ? vg.tiles.slice() : [];
-  if(!tiles.length && VAGAS.length){
-    const prontas = VAGAS.filter(v=>v.cob>=REGUA && estagio(v.id)==="analise").length;
-    const quase   = VAGAS.filter(v=>v.cob<REGUA && v.cob>=REGUA-10 && estagio(v.id)==="analise").length;
-    tiles.push({k:"Prontas p/ candidatar", v:String(prontas), n:"cobertura ≥ "+REGUA+"%"});
-    tiles.push({k:"A um passo", v:String(quase), n:"entre "+(REGUA-10)+"% e "+(REGUA-1)+"%"});
-    tiles.push({k:"Em progresso", v:String(porEstagio("progresso").length), n:"posicionamento e CV"});
-    tiles.push({k:"Aplicadas", v:String(porEstagio("aplicada").length), n:"candidaturas enviadas"});
-  }
-  if(tiles.length){
-    const box = el("div","tiles");
-    tiles.forEach(x=>{
-      const d = el("div","tile");
-      d.appendChild(el("div","k",esc(x.k)));
-      d.appendChild(el("div","v",esc(x.v)));
-      if(x.n) d.appendChild(el("div","n",esc(x.n)));
-      box.appendChild(d);
-    });
-    sec.appendChild(box);
-  }
-  if(vg.proximoPasso){
-    sec.appendChild(el("h3",null,esc(t("geral.proximoPasso"))));
-    sec.appendChild(el("p",null,esc(vg.proximoPasso)));
-  }
-  if(vg.oQueFalta){
-    sec.appendChild(el("h3",null,esc(t("geral.oQueFalta"))));
-    sec.appendChild(el("p",null,esc(vg.oQueFalta)));
-  }
-  (vg.paragrafos||[]).forEach(p=>sec.appendChild(el("p",null,esc(p))));
-  if((vg.alertas||[]).length){
-    sec.appendChild(el("h3",null,esc(t("geral.alertas"))));
-    vg.alertas.forEach(a=>sec.appendChild(el("div","aviso",esc(a))));
-  }
-  sec.appendChild(el("h3",null,esc(t("geral.comoFunciona"))));
-  sec.appendChild(el("p",null,esc(t("geral.comoFuncionaTexto"))));
-}
-
 function viewAnalise(sec){
   sec.appendChild(el("h2",null,esc(t("tab.analise"))));
   sec.appendChild(el("p","lede",esc(t("analise.lede"))));
@@ -728,205 +657,83 @@ function pilha(sec,est,aba,ledeKey,vazioKey){
 const viewAplicadas  = sec => pilha(sec,"aplicada","aplicadas","aplicadas.lede","vazio.aplicadas");
 const viewArquivadas = sec => pilha(sec,"arquivada","arquivadas","arquivadas.lede","vazio.arquivadas");
 
+/* Cruza os "falta" das vagas para achar o que se repete. Prioriza as vagas
+   já aplicadas — é ali que a lacuna custou de verdade; sem nenhuma aplicada
+   ainda, usa análise/progresso como aproximação e avisa que é preliminar. */
+function padraoDeLacunas(){
+  let base = VAGAS.filter(v=>estagio(v.id)==="aplicada");
+  let preliminar = false;
+  if(!base.length){
+    base = VAGAS.filter(v=>{ const e=estagio(v.id); return e==="analise"||e==="progresso"; });
+    preliminar = true;
+  }
+  const freq = {};
+  base.forEach(v=>(v.falta||[]).forEach(f=>{
+    const k = String(f).trim();
+    if(k) freq[k] = (freq[k]||0)+1;
+  }));
+  const chaves = Object.keys(freq);
+  const padrao = chaves.filter(k=>freq[k]>=2).sort((a,b)=>freq[b]-freq[a]);
+  const unicos = chaves.filter(k=>freq[k]===1);
+  return {base, preliminar, freq, padrao, unicos};
+}
 function viewMercado(sec){
-  const p = DADOS.posicionamento || {};
   sec.appendChild(el("h2",null,esc(t("tab.mercado"))));
-  if(p.titulo) sec.appendChild(el("p","lede",esc(p.titulo)));
-  if(p.alvo) sec.appendChild(el("p",null,esc(p.alvo)));
-  if((p.diferenciais||[]).length){
-    sec.appendChild(el("h3",null,esc(t("mercado.diferenciais"))));
-    p.diferenciais.forEach(x=>sec.appendChild(el("div","nota",esc(x))));
-  }
-  if((p.contra||[]).length){
-    sec.appendChild(el("h3",null,esc(t("mercado.contra"))));
-    p.contra.forEach(x=>sec.appendChild(el("div","nota alerta",esc(x))));
-  }
-  if((p.setores||[]).length){
-    sec.appendChild(el("h3",null,esc(t("mercado.setores"))));
-    const rolar = el("div","rolar");
-    const linhas = p.setores.map(s=>
-      "<tr><td><strong>"+esc(s.setor)+"</strong></td><td>"+esc(s.afinidade)+"</td><td>"+esc(s.porque)+"</td></tr>").join("");
-    rolar.innerHTML = "<table><thead><tr><th>Setor</th><th>Afinidade</th><th>Por quê</th></tr></thead><tbody>"+linhas+"</tbody></table>";
-    sec.appendChild(rolar);
-  }
-}
+  const {base, preliminar, freq, padrao, unicos} = padraoDeLacunas();
 
-/* Checklist genérico: usado por Ajustes de CV e por Estudos. */
-function checklist(sec,itens,chaveEstado,rotulo,porque,extra){
-  itens.forEach(it=>{
-    const valor = rotulo(it);
-    const marcado = estado[chaveEstado].indexOf(valor)>=0;
-    const lab = el("label","item"+(marcado?" ok":""));
-    const cb = document.createElement("input");
-    cb.type="checkbox"; cb.checked=marcado;
-    cb.onchange = ()=>alternarLista(chaveEstado,valor);
-    lab.appendChild(cb);
-    const txt = el("div");
-    txt.appendChild(el("span","it",esc(valor) + (extra?extra(it):"")));
-    const p = porque(it);
-    if(p) txt.appendChild(el("span","porque",esc(p)));
-    lab.appendChild(txt);
-    sec.appendChild(lab);
-  });
-  const feitos = itens.filter(it=>estado[chaveEstado].indexOf(rotulo(it))>=0).length;
-  sec.appendChild(el("div","fonte",feitos+" de "+itens.length+" concluídos"));
-}
+  if(!base.length){ sec.appendChild(vazio(t("mercado.semDados"))); return; }
+  sec.appendChild(el("p","lede",esc(preliminar ? t("mercado.preliminar") : t("mercado.lede"))));
 
-function viewCv(sec){
-  sec.appendChild(el("h2",null,esc(t("tab.cv"))));
-  sec.appendChild(el("p","lede",esc(t("cv.lede"))));
-  checklist(sec, CVGERAL, "cv", it=>it.t, it=>it.porque);
-}
-
-function viewCursos(sec){
-  sec.appendChild(el("h2",null,esc(t("tab.cursos"))));
-  sec.appendChild(el("p","lede",esc(t("cursos.lede"))));
-  checklist(sec, CURSOS, "cursos", it=>it.nome, it=>it.porque,
-    it=>{
-      const partes=[];
-      if(it.onde)  partes.push(esc(it.onde));
-      if(it.custo) partes.push(esc(it.custo));
-      let s = partes.length ? ' <span class="porque" style="display:inline">· '+partes.join(" · ")+'</span>' : "";
-      if(it.quando) s += '<span class="quando">'+esc(it.quando)+'</span>';
-      if(it.link)   s += ' <a href="'+esc(it.link)+'" target="_blank" rel="noopener noreferrer">↗</a>';
-      return s;
+  const sugestoes = DADOS.sugestoes || {};
+  sec.appendChild(el("h3",null,esc(t("mercado.padrao"))));
+  if(padrao.length){
+    padrao.forEach(item=>{
+      const c = el("div","vaga");
+      c.appendChild(el("div","vtit",esc(item)));
+      c.appendChild(el("div","vmeta",esc(t("mercado.frequencia",{n:freq[item], t:base.length}))));
+      const s = sugestoes[item];
+      if(s && s.cv){
+        const b = el("div","bloco");
+        b.appendChild(el("div","bt",esc(t("mercado.cv"))));
+        b.appendChild(el("p",null,esc(s.cv)));
+        c.appendChild(b);
+      }
+      if(s && s.curso){
+        const b = el("div","bloco");
+        b.appendChild(el("div","bt",esc(t("mercado.curso"))));
+        const nome = typeof s.curso==="string" ? s.curso : s.curso.nome;
+        const url  = typeof s.curso==="object" ? s.curso.link : "";
+        b.appendChild(el("p",null, esc(nome) + (url?" "+link(url,"↗"):"")));
+        c.appendChild(b);
+      }
+      sec.appendChild(c);
     });
-}
-
-/* Frequência de um requisito entre as vagas ainda em jogo (não arquivadas).
-   Obrigatório pesa 1, desejável 0,5: um requisito listado como diferencial
-   não pode derrubar a cobertura como se fosse obrigatório. */
-function frequencia(skillId){
-  let f=0;
-  VAGAS.filter(v=>estagio(v.id)!=="arquivada").forEach(v=>{
-    const r=(v.requisitos||[]).find(r=>r.skillId===skillId);
-    if(r) f += r.tipo==="desejavel" ? 0.5 : 1;
-  });
-  return f;
-}
-function viewSkills(sec){
-  sec.appendChild(el("h2",null,esc(t("tab.skills"))));
-  sec.appendChild(el("p","lede",esc(t("skills.lede"))));
-
-  const gaps = SKILLS.map(s=>({s, f:frequencia(s.id), n:nivelDe(s.id)}))
-    .filter(g=>g.f>0 && g.n<2)
-    .sort((a,b)=> b.f-a.f || a.n-b.n);
-  if(gaps.length){
-    sec.appendChild(el("h3",null,esc(t("skills.gaps"))));
-    gaps.slice(0,8).forEach(g=>{
-      const r = el("div","lead");
-      r.appendChild(el("div","lt","<strong>"+esc(g.s.nome)+"</strong><em>pedido em "+g.f+
-        " vaga(s) · seu nível: "+esc(NIVEIS[g.n]||g.n)+"</em>"));
-      sec.appendChild(r);
-    });
+  } else {
+    sec.appendChild(vazio(t("mercado.semPadrao")));
   }
 
-  sec.appendChild(el("h3",null,esc(t("skills.catalogo"))));
-  const grupos = CATEGORIAS.length ? CATEGORIAS : [{id:null,nome:""}];
-  grupos.forEach(cat=>{
-    const doGrupo = SKILLS.filter(s=> cat.id==null || s.categoria===cat.id);
-    if(!doGrupo.length) return;
-    if(cat.nome) sec.appendChild(el("div","reqlab",esc(cat.nome)));
-    doGrupo.forEach(s=>{
-      const r = el("div","skrow");
-      const f = frequencia(s.id);
-      r.appendChild(el("div",null,"<strong>"+esc(s.nome)+"</strong>"+
-        (f?'<span class="cat">pedido em '+f+" vaga(s)</span>":"")));
-      const niv = el("div","niv");
-      NIVEIS.forEach((rot,n)=>{
-        const b = el("button","nivbtn"+(nivelDe(s.id)===n?" on":""),String(n));
-        b.type="button"; b.title=rot; b.setAttribute("aria-label",s.nome+": "+rot);
-        b.onclick=()=>definirNivel(s.id,n);
-        niv.appendChild(b);
-      });
-      r.appendChild(niv);
-      sec.appendChild(r);
-    });
-  });
-}
-
-function viewProjetos(sec){
-  sec.appendChild(el("h2",null,esc(t("tab.projetos"))));
-  sec.appendChild(el("p","lede",esc(t("projetos.lede"))));
-  PROJETOS.forEach(p=>{
-    const c = el("div","vaga");
-    if(p.contexto) c.appendChild(el("div","seg",esc(p.contexto)));
-    c.appendChild(el("div","vtit",esc(p.nome)));
-    if(p.descricao) c.appendChild(el("div","vmeta",esc(p.descricao)));
-    const etapas = p.etapas||[];
-    const marcas = estado.etapas[p.id]||[];
-    etapas.forEach((e,i)=>{
-      const nome = typeof e==="string" ? e : e.nome;
-      const lab = el("label","item"+(marcas[i]?" ok":""));
-      const cb = document.createElement("input");
-      cb.type="checkbox"; cb.checked=!!marcas[i];
-      cb.onchange=()=>alternarEtapa(p.id,i);
-      lab.appendChild(cb);
-      lab.appendChild(el("div",null,'<span class="it">'+esc(nome)+"</span>"));
-      c.appendChild(lab);
-    });
-    if(etapas.length){
-      const feitas = etapas.filter((e,i)=>marcas[i]).length;
-      c.appendChild(el("div",null,barra(Math.round(100*feitas/etapas.length))));
-    }
-    if((p.skills||[]).length){
-      const box=el("div","chips");
-      p.skills.forEach(id=>{
-        const s=SKILLS.find(x=>x.id===id);
-        box.appendChild(el("span","chip",esc(s?s.nome:id)));
-      });
-      c.appendChild(box);
-    }
-    sec.appendChild(c);
-  });
-  if(!PROJETOS.length) sec.appendChild(vazio("Nenhum projeto cadastrado."));
-}
-
-function viewMetodo(sec){
-  const m = DADOS.metodo || {};
-  sec.appendChild(el("h2",null,esc(t("tab.metodo"))));
-  sec.appendChild(el("p","lede",esc(t("metodo.lede"))));
-  const dl = el("dl","metodo");
-  Object.keys(m).forEach(k=>{
-    dl.appendChild(el("dt",null,esc(k)));
-    dl.appendChild(el("dd",null,esc(m[k])));
-  });
-  sec.appendChild(dl);
+  if(unicos.length){
+    sec.appendChild(el("h3",null,esc(t("mercado.unicos"))));
+    const box = el("div","chips");
+    unicos.forEach(item=>box.appendChild(el("span","chip falta",esc(item))));
+    sec.appendChild(box);
+  }
 }
 
 /* ===================================================================
    REGISTRO DE ABAS
-   `needs` é a chave de dados que a aba exige. Aba escolhida sem os
-   dados dela é pulada com aviso no console — melhor que uma casca vazia.
+   Sempre as mesmas cinco, sempre nesta ordem, para qualquer pessoa —
+   não são configuráveis. As quatro primeiras são o destino dos botões
+   de acoes(): tirar uma delas orfanaria qualquer vaga movida para lá.
    =================================================================== */
 const TABS = {
-  geral:      {needs:null,              render:viewGeral},
-  analise:    {needs:"vagas",           render:viewAnalise},
-  progresso:  {needs:"vagas",           render:viewProgresso},
-  mercado:    {needs:"posicionamento",  render:viewMercado},
-  cv:         {needs:"cvGeral",         render:viewCv},
-  cursos:     {needs:"cursos",          render:viewCursos},
-  skills:     {needs:"skills",          render:viewSkills},
-  projetos:   {needs:"projetos",        render:viewProjetos},
-  aplicadas:  {needs:"vagas",           render:viewAplicadas},
-  arquivadas: {needs:"vagas",           render:viewArquivadas},
-  metodo:     {needs:"metodo",          render:viewMetodo},
+  analise:    {render:viewAnalise},
+  progresso:  {render:viewProgresso},
+  aplicadas:  {render:viewAplicadas},
+  arquivadas: {render:viewArquivadas},
+  mercado:    {render:viewMercado},
 };
-const PADRAO = ["geral","analise","aplicadas","arquivadas"];
-function temDados(k){
-  if(!k) return true;
-  const d = DADOS[k];
-  if(Array.isArray(d)) return d.length>0;
-  return !!d && Object.keys(d).length>0;
-}
-const ABAS = (Array.isArray(DADOS.tabs) && DADOS.tabs.length ? DADOS.tabs : PADRAO).filter(id=>{
-  if(!TABS[id]){ console.warn("[console] aba desconhecida, ignorada:", id); return false; }
-  if(!temDados(TABS[id].needs)){
-    console.warn("[console] aba \""+id+"\" pedida sem os dados de \""+TABS[id].needs+"\" — pulada.");
-    return false;
-  }
-  return true;
-});
+const ABAS = ["analise","progresso","aplicadas","arquivadas","mercado"];
 
 /* ===================================================================
    RENDER
@@ -940,8 +747,6 @@ function contagem(id){
   if(id==="progresso")  return porEstagio("progresso").length;
   if(id==="aplicadas")  return porEstagio("aplicada").length;
   if(id==="arquivadas") return porEstagio("arquivada").length;
-  if(id==="cursos")     return CURSOS.length;
-  if(id==="projetos")   return PROJETOS.length;
   return 0;
 }
 function montarNav(){
@@ -968,12 +773,6 @@ function render(){
   montarNav();
   const wrap = document.getElementById("wrap");
   wrap.innerHTML = "";
-  if(!ABAS.length){
-    wrap.appendChild(el("div","aviso",
-      "<strong>Console sem dados.</strong> Preencha <code>data/console.json</code> e rode <code>build.py</code>. "+
-      "Veja <code>exemplo/console.json</code> para um modelo completo."));
-    return;
-  }
   const sec = el("section","sec");
   sec.id = "s-"+aberta;
   sec.setAttribute("role","tabpanel");

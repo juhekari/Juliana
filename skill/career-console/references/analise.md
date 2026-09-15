@@ -41,21 +41,33 @@ esforço rende mais fechando a lacuna do que escrevendo carta.
 
 Ajuste a régua se o caso pedir, e diga por quê.
 
-## O achado que importa mais
+## O achado que importa mais — e por que o texto de `falta` precisa ser igual
 
 Olhe o conjunto, não só cada vaga. **Qual requisito aparece em mais anúncios e a
-pessoa não cobre?** Esse é o `visaoGeral.oQueFalta`, e costuma ser a coisa mais
-útil do console inteiro — porque é uma lacuna só, que destrava várias vagas de
-uma vez.
+pessoa não cobre?** Costuma ser o achado mais útil do console inteiro — uma
+lacuna só, que destrava várias vagas de uma vez. É por isso que a aba
+`mercado` existe: ela cruza o `falta[]` das vagas aplicadas e mostra o que se
+repete.
+
+Esse cruzamento é literal, string contra string — não é uma segunda IA lendo
+o significado. Se a mesma lacuna aparece como "Airflow como dono do
+orquestrador" numa vaga e "experiência com orquestração de pipeline" noutra,
+o motor as trata como duas coisas diferentes e o padrão não aparece.
+**Escreva a mesma lacuna com o mesmo texto, exatamente, em toda vaga onde ela
+aparecer.** Antes de finalizar os dados, releia os `falta[]` de todas as
+vagas e unifique a redação de qualquer lacuna repetida.
+
+Quando um padrão for claro, preencha `sugestoes` (ver `schema.md`) com a
+chave sendo esse texto exato — é o que liga o padrão à recomendação de CV e
+de curso na aba `mercado`.
 
 Nos consoles que funcionaram, esse achado era sempre específico e um pouco
-desconfortável: "78 das 150 vagas pedem responsabilidade financeira e seu perfil
-não menciona orçamento em lugar nenhum". Não "melhore suas habilidades
-técnicas".
+desconfortável: "faltou responsabilidade financeira em 3 das 4 vagas
+aplicadas" fala mais alto que "melhore suas habilidades técnicas".
 
 Repare também no que **não** é lacuna de competência, mas de vocabulário: a
 pessoa faz a coisa, só não chama pelo nome que o mercado usa. Isso é ajuste de
-CV, rápido e de alto retorno — e vale dizer com essa clareza.
+CV, rápido e de alto retorno — e vale dizer com essa clareza em `sugestoes`.
 
 ## O posicionamento
 
